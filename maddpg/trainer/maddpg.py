@@ -6,7 +6,7 @@ import maddpg.common.tf_util as U
 from maddpg.common.distributions import make_pdtype
 from maddpg import AgentTrainer
 from maddpg.trainer.replay_buffer import ReplayBuffer
-
+import time
 
 def discount_with_dones(rewards, dones, gamma):
     discounted = []
@@ -159,11 +159,14 @@ class MADDPGAgentTrainer(AgentTrainer):
         self.replay_sample_index = None
 
     def update(self, agents, t):
+        #print('start updating')
         if len(self.replay_buffer) < self.max_replay_buffer_len: # replay buffer is not large enough
+            #print("not large enough")
             return
         if not t % 100 == 0:  # only update every 100 steps
             return
 
+        learning_start_time = time.time()
         self.replay_sample_index = self.replay_buffer.make_index(self.args.batch_size)
         # collect replay sample from all agents
         obs_n = []
@@ -192,5 +195,8 @@ class MADDPGAgentTrainer(AgentTrainer):
 
         self.p_update()
         self.q_update()
+        learning_end_time = time.time()
+
+        #print(learning_end_time - learning_start_time)
 
         return [q_loss, p_loss, np.mean(target_q), np.mean(rew), np.mean(target_q_next), np.std(target_q)]
