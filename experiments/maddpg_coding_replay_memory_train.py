@@ -84,7 +84,7 @@ if __name__=="__main__":
     #Parse the parameters
     arglist = parse_args()
 
-    with open('/home/smile/maddpg/parameters/marl_parameters.json') as f:
+    with open('/home/ubuntu/maddpg/parameters/marl_parameters.json') as f:
         parameters = json.load(f)
 
 
