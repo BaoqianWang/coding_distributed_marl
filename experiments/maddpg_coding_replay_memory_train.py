@@ -13,7 +13,6 @@ import json
 
 
 
-
 def parse_args():
     parser = argparse.ArgumentParser("Reinforcement Learning experiments for multiagent environments")
     # Environment
@@ -43,6 +42,7 @@ def parse_args():
     parser.add_argument("--benchmark-dir", type=str, default="./benchmark_files/", help="directory where benchmark data is saved")
     parser.add_argument("--plots-dir", type=str, default="/home/smile/maddpg/learning_curves/", help="directory where plot data is saved")
     return parser.parse_args()
+
 
 def mlp_model(input, num_outputs, scope, reuse=False, num_units=64, rnn_cell=None):
     # This model takes as input an observation and returns values of all actions
@@ -79,12 +79,38 @@ def get_trainers(env, num_agents, name, obs_shape_n, arglist, session):
 
     return trainers
 
+
+def interact_with_environments(env, trainers, steps):
+
+    step = 0
+    obs_n=env.reset()
+    episode_reward = 0
+
+    while step < steps:
+        action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
+        # environment step
+        new_obs_n, rew_n, done_n, info_n = env.step(action_n)
+        step += 1
+
+        # collect experience
+        for i, agent in enumerate(trainers):
+            agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+
+        obs_n = new_obs_n
+
+        for i, rew in enumerate(rew_n):
+            episode_reward += rew
+
+
+    return episode_reward
+
+
 if __name__=="__main__":
 
     #Parse the parameters
     arglist = parse_args()
 
-    with open('/home/ubuntu/maddpg/parameters/marl_parameters.json') as f:
+    with open('/home/smile/maddpg/parameters/marl_parameters.json') as f:
         parameters = json.load(f)
 
 
@@ -118,37 +144,31 @@ if __name__=="__main__":
 
 
         #Initilize parameters, controllers and actors
-        if(node_id==CENTRAL_CONTROLLER):
-            # Create environment
-            env = make_env(arglist.scenario, arglist, arglist.benchmark)
-            obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
+        # if(node_id==CENTRAL_CONTROLLER):
+        #     # Create environment
+        #     env = make_env(arglist.scenario, arglist, arglist.benchmark)
+        #     obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
+        #
+        #     trainers = get_trainers(env, num_agents, "central", obs_shape_n, arglist,session)
+        #     U.initialize()
+        #     train_step=0
 
-            trainers = get_trainers(env, num_agents, "central", obs_shape_n, arglist,session)
-            U.initialize()
-            train_step=0
+        #if(node_id==ACTOR):
 
-        if(node_id==ACTOR):
-            env = make_env(arglist.scenario, arglist, arglist.benchmark)
-            obs_n=env.reset()
-            obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
-            trainers = get_trainers(env, num_agents, "actor", obs_shape_n, arglist,session)
-            U.initialize()
-            episode_rewards = [0.0]
-            train_step=0
-            iter_step=0
+        env = make_env(arglist.scenario, arglist, arglist.benchmark)
+        obs_n = env.reset()
+        obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
+        trainers = get_trainers(env, num_agents, "actor", obs_shape_n, arglist,session)
+        U.initialize()
+        episode_rewards = []
+        train_step=0
+        iter_step=0
 
-        if(node_id>ACTOR):
-            # Create environment
-            env = make_env(arglist.scenario, arglist, arglist.benchmark)
-            obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
-
-            trainers = get_trainers(env, num_agents, "learner", obs_shape_n, arglist,session)
-            U.initialize()
-            train_step=0
-            iter_step=0
+        if (node_id == ACTOR):
+            interact_with_environments(env, trainers, arglist.batch_size * arglist.max_episode_len)
 
 
-        #print('Node%d' %node_id, 'Initialization Done',num_train)
+
         start=time.time()
         while True:
 
@@ -187,86 +207,69 @@ if __name__=="__main__":
             #print('Node%d' %node_id, 'Parameters set up Done', num_train)
 
             if(node_id==ACTOR):
-
-                while True:
-                    action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
-                    # environment step
-                    new_obs_n, rew_n, done_n, info_n = env.step(action_n)
-                    train_step+=1
-                    iter_step+=1
-                    done = all(done_n)
-                    terminal=(iter_step>=arglist.max_episode_len)
-
-                    # collect experience
-                    for i, agent in enumerate(trainers):
-                        agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
-
-                    obs_n = new_obs_n
-
-                    for i, rew in enumerate(rew_n):
-                        episode_rewards[-1] += rew
-
-                    if done or terminal:
-                        iter_step=0
-                        obs_n=env.reset()
-                        episode_rewards.append(0)
-                    # if(train_step%1000==0):
-                    #     print(train_step)
-                    if(len(episode_rewards)%arglist.save_rate==0):
-                        episode_time=time.time()
-                        print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(num_train, len(episode_rewards), np.mean(episode_rewards[-arglist.save_rate:]),episode_time-start))
-                        start=time.time()
-
-
-                    #print('Actor collecting number of %d episode' %(len(episode_rewards)), 'with train step', train_step)
-                    if(train_step%100==0 and train_step > arglist.batch_size * arglist.max_episode_len):
-                        index=trainers[0].replay_buffer.make_index(arglist.batch_size)
-                        replay_obs_n = []
-                        replay_obs_next_n = []
-                        replay_act_n = []
-                        replay_reward_n=[]
-                        replay_done_n=[]
-                        episodes=dict()
-
-                        for i in range(num_learners):
-                            obs, act, rew, obs_next, done=trainers[i].replay_buffer.sample_index(index)
-                            replay_obs_n.append(obs)
-                            replay_obs_next_n.append(obs_next)
-                            replay_act_n.append(act)
-                            replay_reward_n.append(rew)
-                            replay_done_n.append(done)
-
-
-                        episodes['observation']=replay_obs_n
-                        episodes['actions']=replay_act_n
-                        episodes['observation_next']=replay_obs_next_n
-                        episodes['reward']=replay_reward_n
-                        episodes['done']=replay_done_n
-                        #print(episodes)
-
-                        #Send environments episodes to the learners
-                        for i in range(num_learners):
-                            comm_start = time.time()
-                            comm.send(episodes,dest=2+i,tag=num_train)
-                            comm_end = time.time()
-                            #print('Communication time is', comm_end - comm_start)
-                        num_train+=1
-
+                steps = 25
+                env_num = 0
+                while(True):
+                    if(env_num == 4):
                         break
+                    reward = interact_with_environments(env, trainers, steps)
+                    episode_rewards.append(reward)
+                    env_num += 1
 
 
+                if(len(episode_rewards)%arglist.save_rate==0):
+                    episode_time=time.time()
+                    print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(num_train, len(episode_rewards), np.mean(episode_rewards[-arglist.save_rate:]),episode_time-start))
+                    start=time.time()
 
+                #print('Actor collecting number of %d episode' %(len(episode_rewards)), 'with train step', train_step)
+                #if(train_step%100==0 and train_step > arglist.batch_size * arglist.max_episode_len):
+                index = trainers[0].replay_buffer.make_index(arglist.batch_size)
+                replay_obs_n = []
+                replay_obs_next_n = []
+                replay_act_n = []
+                replay_reward_n = []
+                replay_done_n = []
+                episodes = dict()
+
+                for i in range(num_learners):
+                    obs, act, rew, obs_next, done = trainers[i].replay_buffer.sample_index(index)
+                    replay_obs_n.append(obs)
+                    replay_obs_next_n.append(obs_next)
+                    replay_act_n.append(act)
+                    replay_reward_n.append(rew)
+                    replay_done_n.append(done)
+
+
+                episodes['observation']=replay_obs_n
+                episodes['actions']=replay_act_n
+                episodes['observation_next']=replay_obs_next_n
+                episodes['reward']=replay_reward_n
+                episodes['done']=replay_done_n
+                #print(episodes)
+
+                #Send environments episodes to the learners
+                for i in range(num_learners):
+                    comm_start = time.time()
+                    comm.send(episodes, dest=2+i, tag=num_train)
+                    comm_end = time.time()
+                    #print('Communication time is', comm_end - comm_start)
+
+                num_train+=1
+                #print(num_train)
                 if num_train > arglist.num_train:
                     break
 
 
-            if(node_id>ACTOR):
-                #print('Node%d' %node_id, 'Waiting for epsisodes', num_train)
+
+
+
+
+            if(node_id > ACTOR):
+
                 start_recv_episode=time.time()
                 episodes=comm.recv(source=1, tag=num_train)
                 end_recv_episode=time.time()
-                #print('Worker %d Num train %d, episode receive start time is' %(node_id, num_train), start_recv_episode)
-                #print('Worker %d Num train %d, episode receive end time is' %(node_id, num_train), end_recv_episode)
 
 
                 loss=None
@@ -274,15 +277,11 @@ if __name__=="__main__":
                 loss=trainers[node_id-2].update(trainers, episodes)
                 comp_end = time.time()
 
-                #print('Computation time is', comp_end - comp_start)
-
                 weights = trainers[node_id-2].get_weigths()
-                #print(weights)
                 start_worker_weights=time.time()
                 comm.send(weights, dest=0,tag=num_train)
                 end_worker_weights=time.time()
-                #print('Worker node %d Num train %d sending weights time is' %(node_id, num_train), end_worker_weights - start_worker_weights)
-                #print('Worker node %d Num train %d end sending weights time is' %(node_id, num_train), end_worker_weights)
+
 
                 num_train+=1
 
