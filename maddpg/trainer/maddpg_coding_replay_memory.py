@@ -192,7 +192,7 @@ class MADDPGAgentTrainer(AgentTrainer):
     def preupdate(self):
         self.replay_sample_index = None
 
-    def update(self, agents,episodes):
+    def update(self, agents, episodes):
         #if len(self.replay_buffer) < self.max_replay_buffer_len: # replay buffer is not large enough
             #return
         # if not t % 100 == 0:  # only update every 100 steps
@@ -220,7 +220,7 @@ class MADDPGAgentTrainer(AgentTrainer):
         obs_next=episodes['observation_next'][self.agent_index]
         done=episodes['done'][self.agent_index]
 
-        
+
         # obs, act, rew, obs_next, done = self.replay_buffer.sample_index(index)
 
         # train q network
