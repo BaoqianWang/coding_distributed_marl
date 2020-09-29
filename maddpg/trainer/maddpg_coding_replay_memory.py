@@ -170,7 +170,7 @@ class MADDPGAgentTrainer(AgentTrainer):
         return weigths_dict
 
 
-    def set_weigths(self,weight_dict):
+    def set_weigths(self, weight_dict):
         for i, weight in enumerate(weight_dict['p_variables']):
             tf.keras.backend.set_value(self.p_variables[i], weight)
 
