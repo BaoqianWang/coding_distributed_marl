@@ -1,0 +1,213 @@
+simple
+3
+2020-09-18 16:40:37.474581: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 16:40:37.539645: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 16:40:37.583382: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -18.813199651994474, time: 18.851316928863525
+steps: 499, episodes: 2000, mean episode reward: -6.459008918014406, time: 16.701354265213013
+steps: 749, episodes: 3000, mean episode reward: -5.9806525795919665, time: 16.32181143760681
+steps: 999, episodes: 4000, mean episode reward: -6.283103278808668, time: 17.067654848098755
+steps: 1249, episodes: 5000, mean episode reward: -5.775359191132694, time: 16.60365343093872
+steps: 1499, episodes: 6000, mean episode reward: -6.036730444634366, time: 17.30760097503662
+steps: 1749, episodes: 7000, mean episode reward: -6.4827970791342215, time: 16.542404651641846
+steps: 1999, episodes: 8000, mean episode reward: -6.347473840567245, time: 20.65208339691162
+steps: 2249, episodes: 9000, mean episode reward: -6.307116668614644, time: 17.00573444366455
+steps: 2499, episodes: 10000, mean episode reward: -5.903307323866012, time: 18.94768261909485
+steps: 2749, episodes: 11000, mean episode reward: -6.127735214561844, time: 18.2698757648468
+steps: 2999, episodes: 12000, mean episode reward: -6.028925787603359, time: 18.533175945281982
+steps: 3249, episodes: 13000, mean episode reward: -5.973825650242515, time: 20.153558492660522
+steps: 3499, episodes: 14000, mean episode reward: -6.344321599739262, time: 19.14131999015808
+steps: 3749, episodes: 15000, mean episode reward: -6.315312602924742, time: 20.973735332489014
+steps: 3999, episodes: 16000, mean episode reward: -6.35898820884387, time: 20.83007788658142
+steps: 4249, episodes: 17000, mean episode reward: -6.068321260065635, time: 18.632397174835205
+steps: 4499, episodes: 18000, mean episode reward: -6.359037829731756, time: 18.620028495788574
+steps: 4749, episodes: 19000, mean episode reward: -6.444622131746327, time: 17.533443689346313
+steps: 4999, episodes: 20000, mean episode reward: -6.656596630120258, time: 17.771262407302856
+simple_adversary
+5
+2020-09-18 16:46:59.248246: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 16:46:59.257085: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 16:46:59.306697: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 16:46:59.327273: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 16:46:59.341842: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -22.826537324893785, time: 56.36889696121216
+steps: 499, episodes: 2000, mean episode reward: 5.496020631494334, time: 52.864359855651855
+steps: 749, episodes: 3000, mean episode reward: 6.063837799803046, time: 57.889421701431274
+steps: 999, episodes: 4000, mean episode reward: 5.460488689489087, time: 49.095682859420776
+steps: 1249, episodes: 5000, mean episode reward: 4.978747518895491, time: 56.1031379699707
+steps: 1499, episodes: 6000, mean episode reward: 4.679477948826803, time: 55.31492805480957
+steps: 1749, episodes: 7000, mean episode reward: 4.4107179192259345, time: 58.04924297332764
+steps: 1999, episodes: 8000, mean episode reward: 3.777879970426099, time: 56.545639991760254
+steps: 2249, episodes: 9000, mean episode reward: 3.449352255513447, time: 54.12658476829529
+steps: 2499, episodes: 10000, mean episode reward: 3.326740699559874, time: 63.916118144989014
+steps: 2749, episodes: 11000, mean episode reward: 2.8523707682981314, time: 54.71767020225525
+steps: 2999, episodes: 12000, mean episode reward: 2.7236542554953296, time: 56.63625931739807
+steps: 3249, episodes: 13000, mean episode reward: 3.064202264928039, time: 63.42181706428528
+steps: 3499, episodes: 14000, mean episode reward: 2.828871107998534, time: 65.48218655586243
+steps: 3749, episodes: 15000, mean episode reward: 2.2848177277528308, time: 57.56634163856506
+steps: 3999, episodes: 16000, mean episode reward: 2.135558992330041, time: 65.3204779624939
+steps: 4249, episodes: 17000, mean episode reward: 1.9887125649872508, time: 67.2467999458313
+steps: 4499, episodes: 18000, mean episode reward: 1.7564485780738532, time: 65.44942593574524
+steps: 4749, episodes: 19000, mean episode reward: 1.291950208003538, time: 67.05842757225037
+steps: 4999, episodes: 20000, mean episode reward: 1.8603072188762204, time: 71.84717440605164
+simple_crypto
+5
+2020-09-18 17:07:30.904375: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:07:30.920302: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:07:30.985378: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:07:31.002030: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:07:31.018630: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -19.984118558713615, time: 68.68747758865356
+steps: 499, episodes: 2000, mean episode reward: -13.609107739721749, time: 71.12212634086609
+steps: 749, episodes: 3000, mean episode reward: -8.30530311984673, time: 73.40146994590759
+steps: 999, episodes: 4000, mean episode reward: -7.032162399499317, time: 73.78021168708801
+steps: 1249, episodes: 5000, mean episode reward: 1.1364680235742637, time: 66.63517379760742
+steps: 1499, episodes: 6000, mean episode reward: -1.6986113789151327, time: 72.72708892822266
+steps: 1749, episodes: 7000, mean episode reward: -5.514061390435634, time: 75.81119704246521
+steps: 1999, episodes: 8000, mean episode reward: -7.497277263530724, time: 75.65841913223267
+steps: 2249, episodes: 9000, mean episode reward: -4.717560511965051, time: 78.70979833602905
+steps: 2499, episodes: 10000, mean episode reward: -6.2975769797787935, time: 66.62947010993958
+steps: 2749, episodes: 11000, mean episode reward: -6.328992756504063, time: 70.62025022506714
+steps: 2999, episodes: 12000, mean episode reward: -6.136865481589835, time: 75.51104736328125
+steps: 3249, episodes: 13000, mean episode reward: -5.459999207861858, time: 76.49307990074158
+steps: 3499, episodes: 14000, mean episode reward: -7.318894460028941, time: 71.80855107307434
+steps: 3749, episodes: 15000, mean episode reward: -7.744427790383223, time: 82.64327836036682
+steps: 3999, episodes: 16000, mean episode reward: -8.061750166893159, time: 76.49031090736389
+steps: 4249, episodes: 17000, mean episode reward: -9.362455538386378, time: 76.39281749725342
+steps: 4499, episodes: 18000, mean episode reward: -7.939398134364218, time: 77.55751943588257
+steps: 4749, episodes: 19000, mean episode reward: -8.518253308828312, time: 74.99072980880737
+steps: 4999, episodes: 20000, mean episode reward: -8.821433592438924, time: 79.33714294433594
+simple_push
+4
+2020-09-18 17:33:03.073457: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:33:03.096957: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:33:03.112702: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:33:03.236992: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -20.923347594212824, time: 49.449586629867554
+steps: 499, episodes: 2000, mean episode reward: -17.109262016053083, time: 43.92672038078308
+steps: 749, episodes: 3000, mean episode reward: -17.008472954727672, time: 44.70020055770874
+steps: 999, episodes: 4000, mean episode reward: -13.687131823923316, time: 44.776118993759155
+steps: 1249, episodes: 5000, mean episode reward: -12.251517789074489, time: 48.29983067512512
+steps: 1499, episodes: 6000, mean episode reward: -11.80971621799692, time: 51.08001351356506
+steps: 1749, episodes: 7000, mean episode reward: -11.547853646956058, time: 44.1291229724884
+steps: 1999, episodes: 8000, mean episode reward: -11.247102613202523, time: 47.14814472198486
+steps: 2249, episodes: 9000, mean episode reward: -11.656975933256247, time: 46.063459634780884
+steps: 2499, episodes: 10000, mean episode reward: -11.555680912941986, time: 46.619431257247925
+steps: 2749, episodes: 11000, mean episode reward: -11.56368511751178, time: 40.595237493515015
+steps: 2999, episodes: 12000, mean episode reward: -11.56890257989668, time: 39.71180605888367
+steps: 3249, episodes: 13000, mean episode reward: -11.228945700105259, time: 36.57530641555786
+steps: 3499, episodes: 14000, mean episode reward: -11.035151178853514, time: 39.57747793197632
+steps: 3749, episodes: 15000, mean episode reward: -11.454024155704971, time: 41.29937195777893
+steps: 3999, episodes: 16000, mean episode reward: -11.206196911555141, time: 40.04607343673706
+steps: 4249, episodes: 17000, mean episode reward: -11.25195794744234, time: 46.331100940704346
+steps: 4499, episodes: 18000, mean episode reward: -11.212362908261172, time: 40.94620752334595
+steps: 4749, episodes: 19000, mean episode reward: -11.548859811681199, time: 31.529008388519287
+steps: 4999, episodes: 20000, mean episode reward: -10.851002150964584, time: 32.91949152946472
+simple_reference
+4
+2020-09-18 17:47:55.645933: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:47:55.672648: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:47:55.675067: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 17:47:55.750502: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -332.0770039164114, time: 38.330708742141724
+steps: 499, episodes: 2000, mean episode reward: -94.02996904141354, time: 45.15408682823181
+steps: 749, episodes: 3000, mean episode reward: -79.22919650117574, time: 41.186495780944824
+steps: 999, episodes: 4000, mean episode reward: -69.75935047868072, time: 35.42913627624512
+steps: 1249, episodes: 5000, mean episode reward: -71.07673570617672, time: 38.34289860725403
+steps: 1499, episodes: 6000, mean episode reward: -68.2604510088853, time: 35.412461280822754
+steps: 1749, episodes: 7000, mean episode reward: -65.1860670511564, time: 36.702630281448364
+steps: 1999, episodes: 8000, mean episode reward: -68.70672307749652, time: 34.46273851394653
+steps: 2249, episodes: 9000, mean episode reward: -64.96851633746411, time: 32.635780811309814
+steps: 2499, episodes: 10000, mean episode reward: -65.0497351882455, time: 33.20390319824219
+steps: 2749, episodes: 11000, mean episode reward: -67.004766728459, time: 42.36770939826965
+steps: 2999, episodes: 12000, mean episode reward: -64.26440296007256, time: 33.66306471824646
+steps: 3249, episodes: 13000, mean episode reward: -66.20450147899403, time: 35.02347016334534
+steps: 3499, episodes: 14000, mean episode reward: -66.37219473174297, time: 38.78236222267151
+steps: 3749, episodes: 15000, mean episode reward: -67.7383097820649, time: 39.724743366241455
+steps: 3999, episodes: 16000, mean episode reward: -64.93575470484552, time: 36.55296874046326
+steps: 4249, episodes: 17000, mean episode reward: -66.42325517404775, time: 36.44304943084717
+steps: 4499, episodes: 18000, mean episode reward: -66.9264049467876, time: 34.526986837387085
+steps: 4749, episodes: 19000, mean episode reward: -65.69021812759867, time: 38.519856214523315
+steps: 4999, episodes: 20000, mean episode reward: -67.25224163101402, time: 33.68949222564697
+simple_speaker_listener
+4
+2020-09-18 18:00:48.617081: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:00:48.630311: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:00:48.645043: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:00:48.671299: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -216.41632521738117, time: 38.844606161117554
+steps: 499, episodes: 2000, mean episode reward: -60.88806235456902, time: 32.846750020980835
+steps: 749, episodes: 3000, mean episode reward: -61.818053921567405, time: 28.026488780975342
+steps: 999, episodes: 4000, mean episode reward: -60.68751692454767, time: 29.005701303482056
+steps: 1249, episodes: 5000, mean episode reward: -59.8122310411373, time: 29.08010768890381
+steps: 1499, episodes: 6000, mean episode reward: -60.99876425859683, time: 37.64474844932556
+steps: 1749, episodes: 7000, mean episode reward: -61.56842392028548, time: 32.050397872924805
+steps: 1999, episodes: 8000, mean episode reward: -62.115344541259546, time: 32.005077838897705
+steps: 2249, episodes: 9000, mean episode reward: -65.80323577806284, time: 33.192790269851685
+steps: 2499, episodes: 10000, mean episode reward: -62.9569111801786, time: 32.51814794540405
+steps: 2749, episodes: 11000, mean episode reward: -62.12634556677056, time: 30.053637504577637
+steps: 2999, episodes: 12000, mean episode reward: -63.99809387432487, time: 36.02580451965332
+steps: 3249, episodes: 13000, mean episode reward: -59.9715350745271, time: 30.396585702896118
+steps: 3499, episodes: 14000, mean episode reward: -62.08174255158173, time: 33.27640652656555
+steps: 3749, episodes: 15000, mean episode reward: -63.013254736452915, time: 34.17130780220032
+steps: 3999, episodes: 16000, mean episode reward: -66.52875061004842, time: 30.408679485321045
+steps: 4249, episodes: 17000, mean episode reward: -66.59110072710749, time: 36.35248160362244
+steps: 4499, episodes: 18000, mean episode reward: -66.78389376661534, time: 32.04724383354187
+steps: 4749, episodes: 19000, mean episode reward: -65.91258543459512, time: 28.649598121643066
+steps: 4999, episodes: 20000, mean episode reward: -67.25798683306768, time: 27.68978977203369
+simple_spread
+5
+2020-09-18 18:12:01.027708: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:12:01.029932: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:12:01.060265: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:12:01.101526: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:12:01.106250: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -3911.692437545717, time: 60.09856867790222
+steps: 499, episodes: 2000, mean episode reward: -5822.756618663025, time: 58.364845514297485
+steps: 749, episodes: 3000, mean episode reward: -2690.4066484336067, time: 53.89022946357727
+steps: 999, episodes: 4000, mean episode reward: -4439.403297147971, time: 59.03790521621704
+steps: 1249, episodes: 5000, mean episode reward: -1273.4870708594149, time: 55.80609726905823
+steps: 1499, episodes: 6000, mean episode reward: -931.3940543300221, time: 56.256853103637695
+steps: 1749, episodes: 7000, mean episode reward: -922.0010229320932, time: 62.630966901779175
+steps: 1999, episodes: 8000, mean episode reward: -910.7692150687958, time: 57.376184701919556
+steps: 2249, episodes: 9000, mean episode reward: -896.9451142608505, time: 54.79210591316223
+steps: 2499, episodes: 10000, mean episode reward: -892.8054540961422, time: 51.86331272125244
+steps: 2749, episodes: 11000, mean episode reward: -920.8553931131001, time: 57.182026624679565
+steps: 2999, episodes: 12000, mean episode reward: -1188.4131739825696, time: 53.69284725189209
+steps: 3249, episodes: 13000, mean episode reward: -1086.5421436573695, time: 60.60012173652649
+steps: 3499, episodes: 14000, mean episode reward: -945.5442487180461, time: 61.94806718826294
+steps: 3749, episodes: 15000, mean episode reward: -949.3022853280844, time: 61.25476026535034
+steps: 3999, episodes: 16000, mean episode reward: -930.3981106147736, time: 56.41396760940552
+steps: 4249, episodes: 17000, mean episode reward: -958.5816545749611, time: 62.30210995674133
+steps: 4499, episodes: 18000, mean episode reward: -922.589155946221, time: 53.09949731826782
+steps: 4749, episodes: 19000, mean episode reward: -920.48832565642, time: 57.57028102874756
+steps: 4999, episodes: 20000, mean episode reward: -896.1067746028556, time: 58.32403802871704
+simple_tag
+6
+2020-09-18 18:31:58.314246: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:31:58.404960: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:31:58.411429: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:31:58.414091: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:31:58.415964: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+2020-09-18 18:31:58.458306: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+steps: 249, episodes: 1000, mean episode reward: -1.069674297137718, time: 86.54810047149658
+steps: 499, episodes: 2000, mean episode reward: 8.802733558663334, time: 80.62175631523132
+steps: 749, episodes: 3000, mean episode reward: 7.864897539248327, time: 78.46125817298889
+steps: 999, episodes: 4000, mean episode reward: 20.45928092488802, time: 77.95978260040283
+steps: 1249, episodes: 5000, mean episode reward: 64.56346935337969, time: 77.94274425506592
+steps: 1499, episodes: 6000, mean episode reward: 41.646619716629296, time: 81.23981761932373
+steps: 1749, episodes: 7000, mean episode reward: 61.78428433457807, time: 75.38327407836914
+steps: 1999, episodes: 8000, mean episode reward: 89.98025510605355, time: 75.84747982025146
+steps: 2249, episodes: 9000, mean episode reward: 90.13487889467555, time: 79.90581607818604
+steps: 2499, episodes: 10000, mean episode reward: 58.3242916400598, time: 86.93024754524231
+steps: 2749, episodes: 11000, mean episode reward: 40.96995641104443, time: 75.23477101325989
+steps: 2999, episodes: 12000, mean episode reward: 39.60711838953016, time: 76.89285182952881
+steps: 3249, episodes: 13000, mean episode reward: 35.65722650160575, time: 81.55291652679443
+steps: 3499, episodes: 14000, mean episode reward: 40.3604963325495, time: 82.75756406784058
+steps: 3749, episodes: 15000, mean episode reward: 37.17236593909135, time: 78.28142666816711
+steps: 3999, episodes: 16000, mean episode reward: 32.559602122316925, time: 83.66867756843567
+steps: 4249, episodes: 17000, mean episode reward: 27.3778194060069, time: 86.57160353660583
+steps: 4499, episodes: 18000, mean episode reward: 19.152578427671067, time: 78.8488416671753
+steps: 4749, episodes: 19000, mean episode reward: 18.506590290543073, time: 77.30774188041687
+steps: 4999, episodes: 20000, mean episode reward: 16.55541585557969, time: 81.10200572013855
+

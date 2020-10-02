@@ -1,0 +1,201 @@
+simple
+2020-09-19 15:25:45.783279: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -38.26619773520849, time: 7.228
+steps: 49975, episodes: 2000, mean episode reward: -25.093542428094654, time: 9.918
+steps: 74975, episodes: 3000, mean episode reward: -6.395773942693546, time: 9.806
+steps: 99975, episodes: 4000, mean episode reward: -6.064818352138529, time: 9.853
+steps: 124975, episodes: 5000, mean episode reward: -6.377582815841403, time: 9.858
+steps: 149975, episodes: 6000, mean episode reward: -6.329277761954099, time: 9.913
+steps: 174975, episodes: 7000, mean episode reward: -6.4156911937537044, time: 9.897
+steps: 199975, episodes: 8000, mean episode reward: -6.167221468114847, time: 10.054
+steps: 224975, episodes: 9000, mean episode reward: -6.362411487245915, time: 9.986
+steps: 249975, episodes: 10000, mean episode reward: -6.024658267997601, time: 9.971
+steps: 274975, episodes: 11000, mean episode reward: -6.402823820410519, time: 10.047
+steps: 299975, episodes: 12000, mean episode reward: -6.556365067947473, time: 10.027
+steps: 324975, episodes: 13000, mean episode reward: -6.376280069931385, time: 10.031
+steps: 349975, episodes: 14000, mean episode reward: -6.163667773549845, time: 10.035
+steps: 374975, episodes: 15000, mean episode reward: -6.289999213409174, time: 10.023
+steps: 399975, episodes: 16000, mean episode reward: -6.1150333129054415, time: 10.031
+steps: 424975, episodes: 17000, mean episode reward: -6.518681709721441, time: 10.032
+steps: 449975, episodes: 18000, mean episode reward: -6.416509040669577, time: 10.034
+steps: 474975, episodes: 19000, mean episode reward: -5.831120596672907, time: 10.043
+steps: 499975, episodes: 20000, mean episode reward: -6.437295116110733, time: 10.033
+...Finished total of 20001 episodes.
+simple_adversary
+2020-09-19 15:29:06.286223: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -22.395050747967726, time: 21.056
+steps: 49975, episodes: 2000, mean episode reward: -21.954228535445907, time: 34.303
+steps: 74975, episodes: 3000, mean episode reward: 4.685838183089245, time: 34.16
+steps: 99975, episodes: 4000, mean episode reward: 3.079792621915897, time: 34.224
+steps: 124975, episodes: 5000, mean episode reward: 2.9310746059236066, time: 34.253
+steps: 149975, episodes: 6000, mean episode reward: 2.949240100345037, time: 34.335
+steps: 174975, episodes: 7000, mean episode reward: 2.8455670120369905, time: 34.384
+steps: 199975, episodes: 8000, mean episode reward: 2.070361952358712, time: 34.468
+steps: 224975, episodes: 9000, mean episode reward: 1.890107125907593, time: 34.464
+steps: 249975, episodes: 10000, mean episode reward: 1.8029595175126003, time: 34.458
+steps: 274975, episodes: 11000, mean episode reward: 2.286708936495798, time: 34.44
+steps: 299975, episodes: 12000, mean episode reward: 2.315561801860881, time: 34.649
+steps: 324975, episodes: 13000, mean episode reward: 2.264252001393734, time: 34.505
+steps: 349975, episodes: 14000, mean episode reward: 2.4305352821157085, time: 34.432
+steps: 374975, episodes: 15000, mean episode reward: 2.164607890895241, time: 34.425
+steps: 399975, episodes: 16000, mean episode reward: 2.055803307105266, time: 34.541
+steps: 424975, episodes: 17000, mean episode reward: 1.9239948791073553, time: 34.738
+steps: 449975, episodes: 18000, mean episode reward: 2.367698796252853, time: 34.496
+steps: 474975, episodes: 19000, mean episode reward: 1.9881790099514365, time: 34.335
+steps: 499975, episodes: 20000, mean episode reward: 2.0214052400027156, time: 34.45
+...Finished total of 20001 episodes.
+simple_crypto
+2020-09-19 15:40:27.270223: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -24.464129329034893, time: 21.183
+steps: 49975, episodes: 2000, mean episode reward: -17.781783091096475, time: 34.194
+steps: 74975, episodes: 3000, mean episode reward: -11.428701903377721, time: 32.788
+steps: 99975, episodes: 4000, mean episode reward: 10.779882228434838, time: 32.821
+steps: 124975, episodes: 5000, mean episode reward: 15.261148102752324, time: 32.897
+steps: 149975, episodes: 6000, mean episode reward: 15.18146039220556, time: 33.111
+steps: 174975, episodes: 7000, mean episode reward: 15.308329477208822, time: 32.984
+steps: 199975, episodes: 8000, mean episode reward: 15.617603145496043, time: 32.962
+steps: 224975, episodes: 9000, mean episode reward: 18.564292471348082, time: 33.398
+steps: 249975, episodes: 10000, mean episode reward: 15.965518485936137, time: 33.538
+steps: 274975, episodes: 11000, mean episode reward: 15.623810495344937, time: 33.55
+steps: 299975, episodes: 12000, mean episode reward: 15.299790496693266, time: 33.573
+steps: 324975, episodes: 13000, mean episode reward: 15.291458060356586, time: 33.747
+steps: 349975, episodes: 14000, mean episode reward: 15.280242554849266, time: 33.649
+steps: 374975, episodes: 15000, mean episode reward: 15.479320350961997, time: 33.702
+steps: 399975, episodes: 16000, mean episode reward: 15.501479311641473, time: 33.576
+steps: 424975, episodes: 17000, mean episode reward: 15.33074546795786, time: 33.619
+steps: 449975, episodes: 18000, mean episode reward: 15.274487286607236, time: 33.79
+steps: 474975, episodes: 19000, mean episode reward: 15.374929399058939, time: 34.99
+steps: 499975, episodes: 20000, mean episode reward: 15.422549709988994, time: 33.198
+...Finished total of 20001 episodes.
+simple_push
+2020-09-19 15:51:30.317785: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -27.486935349737614, time: 15.104
+steps: 49975, episodes: 2000, mean episode reward: -18.032688396180532, time: 22.231
+steps: 74975, episodes: 3000, mean episode reward: -10.66799530731107, time: 22.27
+steps: 99975, episodes: 4000, mean episode reward: -9.440851699730839, time: 22.269
+steps: 124975, episodes: 5000, mean episode reward: -9.394224195055841, time: 22.363
+steps: 149975, episodes: 6000, mean episode reward: -9.210912766772665, time: 22.417
+steps: 174975, episodes: 7000, mean episode reward: -8.947816113316726, time: 22.429
+steps: 199975, episodes: 8000, mean episode reward: -8.585199953610024, time: 22.474
+steps: 224975, episodes: 9000, mean episode reward: -8.574133787156915, time: 22.446
+steps: 249975, episodes: 10000, mean episode reward: -8.612884010462793, time: 22.469
+steps: 274975, episodes: 11000, mean episode reward: -8.709657577419787, time: 22.246
+steps: 299975, episodes: 12000, mean episode reward: -8.67806427365448, time: 22.177
+steps: 324975, episodes: 13000, mean episode reward: -8.738167937849466, time: 22.193
+steps: 349975, episodes: 14000, mean episode reward: -8.546120473843748, time: 22.1
+steps: 374975, episodes: 15000, mean episode reward: -8.657054283757613, time: 22.205
+steps: 399975, episodes: 16000, mean episode reward: -8.590384419482882, time: 22.208
+steps: 424975, episodes: 17000, mean episode reward: -8.75770116699914, time: 22.19
+steps: 449975, episodes: 18000, mean episode reward: -8.796822546717216, time: 22.229
+steps: 474975, episodes: 19000, mean episode reward: -8.708208605674983, time: 22.21
+steps: 499975, episodes: 20000, mean episode reward: -8.622453949166905, time: 22.29
+...Finished total of 20001 episodes.
+simple_reference
+2020-09-19 15:58:53.546934: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -152.46867967521138, time: 15.112
+steps: 49975, episodes: 2000, mean episode reward: -248.31085678486156, time: 23.165
+steps: 74975, episodes: 3000, mean episode reward: -70.55530718869991, time: 23.193
+steps: 99975, episodes: 4000, mean episode reward: -64.01497290120773, time: 23.204
+steps: 124975, episodes: 5000, mean episode reward: -62.0325562762835, time: 23.289
+steps: 149975, episodes: 6000, mean episode reward: -61.50987546429063, time: 23.231
+steps: 174975, episodes: 7000, mean episode reward: -59.46576820848488, time: 22.997
+steps: 199975, episodes: 8000, mean episode reward: -57.30213110803736, time: 23.242
+steps: 224975, episodes: 9000, mean episode reward: -57.96190391839064, time: 24.067
+steps: 249975, episodes: 10000, mean episode reward: -54.88389691217904, time: 23.129
+steps: 274975, episodes: 11000, mean episode reward: -53.46399389457899, time: 23.092
+steps: 299975, episodes: 12000, mean episode reward: -49.43618555488302, time: 23.071
+steps: 324975, episodes: 13000, mean episode reward: -49.724807613795114, time: 23.147
+steps: 349975, episodes: 14000, mean episode reward: -49.10574703508386, time: 23.122
+steps: 374975, episodes: 15000, mean episode reward: -47.928647800127614, time: 23.104
+steps: 399975, episodes: 16000, mean episode reward: -47.98979278338216, time: 23.11
+steps: 424975, episodes: 17000, mean episode reward: -43.53942548011638, time: 23.107
+steps: 449975, episodes: 18000, mean episode reward: -45.279435233950764, time: 23.104
+steps: 474975, episodes: 19000, mean episode reward: -44.120223795597845, time: 23.214
+steps: 499975, episodes: 20000, mean episode reward: -46.533046006649876, time: 23.265
+...Finished total of 20001 episodes.
+simple_speaker_listener
+2020-09-19 16:06:34.379302: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -189.94214048873556, time: 14.106
+steps: 49975, episodes: 2000, mean episode reward: -283.0967627729582, time: 21.528
+steps: 74975, episodes: 3000, mean episode reward: -57.610566574461785, time: 21.428
+steps: 99975, episodes: 4000, mean episode reward: -41.824068890560945, time: 20.578
+steps: 124975, episodes: 5000, mean episode reward: -37.12989315135093, time: 20.68
+steps: 149975, episodes: 6000, mean episode reward: -34.85330255134645, time: 20.684
+steps: 174975, episodes: 7000, mean episode reward: -37.39211969463584, time: 20.763
+steps: 199975, episodes: 8000, mean episode reward: -36.77252957849027, time: 20.706
+steps: 224975, episodes: 9000, mean episode reward: -35.97959873807684, time: 21.332
+steps: 249975, episodes: 10000, mean episode reward: -38.54413967905473, time: 21.496
+steps: 274975, episodes: 11000, mean episode reward: -37.098746626371494, time: 22.206
+steps: 299975, episodes: 12000, mean episode reward: -39.361189724903795, time: 22.09
+steps: 324975, episodes: 13000, mean episode reward: -42.22749824487606, time: 22.23
+steps: 349975, episodes: 14000, mean episode reward: -39.895756861389664, time: 22.221
+steps: 374975, episodes: 15000, mean episode reward: -40.48110691643908, time: 22.253
+steps: 399975, episodes: 16000, mean episode reward: -40.691016583952, time: 22.153
+steps: 424975, episodes: 17000, mean episode reward: -41.853879621978614, time: 22.213
+steps: 449975, episodes: 18000, mean episode reward: -41.45597971130746, time: 22.088
+steps: 474975, episodes: 19000, mean episode reward: -38.5740301594374, time: 22.204
+steps: 499975, episodes: 20000, mean episode reward: -39.54347983942587, time: 22.277
+...Finished total of 20001 episodes.
+simple_spread
+2020-09-19 16:13:44.299358: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -22910.701407298024, time: 27.844
+steps: 49975, episodes: 2000, mean episode reward: -4409.059373871011, time: 40.434
+steps: 74975, episodes: 3000, mean episode reward: -1050.5619961108607, time: 41.684
+steps: 99975, episodes: 4000, mean episode reward: -1069.4599620977635, time: 41.44
+steps: 124975, episodes: 5000, mean episode reward: -905.63688463043, time: 40.781
+steps: 149975, episodes: 6000, mean episode reward: -907.1869998464844, time: 41.7
+steps: 174975, episodes: 7000, mean episode reward: -1006.2300344991694, time: 42.62
+steps: 199975, episodes: 8000, mean episode reward: -2194.1406159855633, time: 43.44
+steps: 224975, episodes: 9000, mean episode reward: -1058.1190122772414, time: 41.661
+steps: 249975, episodes: 10000, mean episode reward: -819.9572570966114, time: 40.897
+steps: 274975, episodes: 11000, mean episode reward: -814.7524963405596, time: 42.167
+steps: 299975, episodes: 12000, mean episode reward: -770.021711265902, time: 41.129
+steps: 324975, episodes: 13000, mean episode reward: -792.1455624066153, time: 41.484
+steps: 349975, episodes: 14000, mean episode reward: -824.8594150668263, time: 42.135
+steps: 374975, episodes: 15000, mean episode reward: -808.5894956652453, time: 41.364
+steps: 399975, episodes: 16000, mean episode reward: -839.6208510061903, time: 41.087
+steps: 424975, episodes: 17000, mean episode reward: -822.1896875304808, time: 41.053
+steps: 449975, episodes: 18000, mean episode reward: -807.4985362030015, time: 41.654
+steps: 474975, episodes: 19000, mean episode reward: -757.1176781246494, time: 41.523
+steps: 499975, episodes: 20000, mean episode reward: -798.6225545010242, time: 41.678
+...Finished total of 20001 episodes.
+simple_tag
+2020-09-19 16:27:27.951889: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2
+Using good policy maddpg and adv policy maddpg
+Starting iterations...
+steps: 24975, episodes: 1000, mean episode reward: -1.689513899890421, time: 35.521
+steps: 49975, episodes: 2000, mean episode reward: 1.8892521040366956, time: 55.001
+steps: 74975, episodes: 3000, mean episode reward: 8.391049245786784, time: 56.918
+steps: 99975, episodes: 4000, mean episode reward: 9.467660491260908, time: 55.874
+steps: 124975, episodes: 5000, mean episode reward: 10.686954952436402, time: 55.207
+steps: 149975, episodes: 6000, mean episode reward: 19.19912510106549, time: 55.491
+steps: 174975, episodes: 7000, mean episode reward: 34.89786735730183, time: 55.524
+steps: 199975, episodes: 8000, mean episode reward: 51.648821075536944, time: 55.277
+steps: 224975, episodes: 9000, mean episode reward: 35.480099798165526, time: 55.244
+steps: 249975, episodes: 10000, mean episode reward: 31.884832887027954, time: 55.586
+steps: 274975, episodes: 11000, mean episode reward: 32.323702036273176, time: 55.452
+steps: 299975, episodes: 12000, mean episode reward: 47.52223673671193, time: 55.659
+steps: 324975, episodes: 13000, mean episode reward: 43.6594714965869, time: 55.864
+steps: 349975, episodes: 14000, mean episode reward: 40.96891562792321, time: 55.637
+steps: 374975, episodes: 15000, mean episode reward: 29.062646399683075, time: 55.604
+steps: 399975, episodes: 16000, mean episode reward: 25.126722189991725, time: 58.19
+steps: 424975, episodes: 17000, mean episode reward: 15.815401034558802, time: 55.915
+steps: 449975, episodes: 18000, mean episode reward: 16.576348008159293, time: 55.687
+steps: 474975, episodes: 19000, mean episode reward: 17.04019259917357, time: 55.871
+steps: 499975, episodes: 20000, mean episode reward: 20.684012243487842, time: 55.437
+...Finished total of 20001 episodes.
+
