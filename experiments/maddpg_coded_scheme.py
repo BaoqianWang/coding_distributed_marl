@@ -214,6 +214,7 @@ if __name__=="__main__":
 
         if (node_id in ACTOR):
             print('Coded computation scheme: ', arglist.scheme)
+            print('Scenario: ', arglist.scenario)
             print('Number of learners: ', num_learners)
             print('Number of agents: ', num_agents)
 
@@ -342,7 +343,7 @@ if __name__=="__main__":
                     while True:
                         if(req.Test()):
                             break
-                        if(clock >= .1):
+                        if(clock >= .25):
                             req_send = comm.isend(data, dest=0, tag=num_train)
                             req.wait()
                             req_send.Cancel()

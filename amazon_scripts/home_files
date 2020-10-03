@@ -1,2 +1,5 @@
 nodeIPaddress
 run_uncoded_coded_schemes.sh
+numAgents
+numLearners
+scenarioName

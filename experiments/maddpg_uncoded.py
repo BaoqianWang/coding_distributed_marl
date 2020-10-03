@@ -184,6 +184,7 @@ if __name__== "__main__":
 
         if (node_id == ACTOR):
             print('Coded computation scheme: ', 'Uncoded')
+            print('Scenario: ', arglist.scenario)
             print('Number of learners: ', num_learners)
             print('Number of agents: ', num_agents)
             interact_with_environments(env, trainers, steps, True)
@@ -276,7 +277,7 @@ if __name__== "__main__":
                 weights = trainers[node_id-2].get_weigths()
 
                 if(node_id in STRAGGLER):
-                    time.sleep(0.1)
+                    time.sleep(0.25)
 
                 start_worker_weights=time.time()
                 comm.send(weights, dest=0,tag=num_train)
