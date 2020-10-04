@@ -18,6 +18,7 @@ import json
 from coding_framework.MDS_code import MDS_code
 from coding_framework.ReplicationBased import ReplicationBased
 from coding_framework.RandomLinear_code import RandomLinear_code
+from coding_framework.VandermondeLDPC_code import VandermondeLDPC_code
 import copy
 from numpy.linalg import matrix_rank
 
@@ -29,7 +30,7 @@ def parse_args():
     parser.add_argument("--max-episode-len", type=int, default=25, help="maximum episode length")
     parser.add_argument("--num-episodes", type=int, default=20000, help="number of episodes")
     parser.add_argument("--train-period", type=int, default=1000, help="frequency of updating parameters")
-    parser.add_argument("--num_train", type=int, default=1000, help="number of train")
+    parser.add_argument("--num_train", type=int, default=500, help="number of train")
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
@@ -42,7 +43,7 @@ def parse_args():
     # Checkpointing
     parser.add_argument("--exp-name", type=str, default="maddpg", help="name of the experiment")
     parser.add_argument("--save-dir", type=str, default="/tmp/policy/", help="directory in which training state and model should be saved")
-    parser.add_argument("--save-rate", type=int, default=500, help="save model once every time this many episodes are completed")
+    parser.add_argument("--save-rate", type=int, default=200, help="save model once every time this many episodes are completed")
     parser.add_argument("--load-dir", type=str, default="", help="directory in which training state and model are loaded")
     # Evaluation
     parser.add_argument("--restore", action="store_true", default=False)
@@ -53,7 +54,9 @@ def parse_args():
     parser.add_argument("--plots-dir", type=str, default="/home/smile/maddpg/learning_curves/", help="directory where plot data is saved")
     parser.add_argument("--num_straggler", type=int, default="0", help="num straggler")
     parser.add_argument("--num_learners", type=int, default="0", help="num learners")
-
+    parser.add_argument("--vanLDPC_p", type=int, default="0", help="LDPC_p")
+    parser.add_argument("--vanLDPC_pho", type=int, default="0", help="LDPC_pho")
+    parser.add_argument("--vanLDPC_gamma", type=int, default="0", help="LDPC_gamma")
     return parser.parse_args()
 
 
@@ -193,18 +196,45 @@ if __name__=="__main__":
         if(arglist.scheme == "ReplicationBased"):
             code_scheme = ReplicationBased(num_agents, num_learners)
         if(arglist.scheme == "RegularLDPC"):
-            #code_scheme = RegularLDPC_code(8, 3, 4)
             code_scheme = RegularLDPC_code(10, 2, 10)
+        if(arglist.scheme) == "VandermondeLDPC":
+            code_scheme = VandermondeLDPC_code(arglist.vanLDPC_p, arglist.vanLDPC_pho , arglist.vanLDPC_gamma)
+
 
         H = code_scheme.H
         #print(H)
+        #print(H)
 
-
+        weight_key = ['p_variables','target_p_variables','q_variables','target_q_variables']
         trainers = get_trainers(env, num_agents, "actor", obs_shape_n, arglist, session)
         U.initialize()
 
         weight_length = len(trainers[0].get_weigths()['p_variables'])
-        weight_key = ['p_variables', 'target_p_variables', 'q_variables', 'target_q_variables']
+        weight_shape = []
+        max_weight_size = 0
+        max_weight_shape = None
+        for i in range(num_agents):
+
+            single_agent_weight = dict()
+
+            for key in weight_key:
+                temp = []
+                for j in range(weight_length):
+                    #temp_max_size =copy.deepcopy(max_weight_size)
+                    #temp_max_shape = copy.deepcopy(max_weight_shape)
+                    temp_shape = trainers[i].get_weigths()[key][j].shape
+                    temp_size = trainers[i].get_weigths()[key][j].size
+                    temp.append(temp_shape)
+                    if(temp_size > max_weight_size):
+                        max_weight_size = copy.deepcopy(temp_size)
+                        max_weight_shape = copy.deepcopy(temp_shape)
+
+                single_agent_weight[key] = copy.deepcopy(temp)
+
+            weight_shape.append(copy.deepcopy(single_agent_weight))
+
+
+        #weight_key = ['p_variables', 'target_p_variables', 'q_variables', 'target_q_variables']
         episode_rewards = []
         episodes = []
         final_episode_rewards = []
@@ -217,7 +247,8 @@ if __name__=="__main__":
             print('Scenario: ', arglist.scenario)
             print('Number of learners: ', num_learners)
             print('Number of agents: ', num_agents)
-
+            if(arglist.scheme) == "VandermondeLDPC":
+                print('LDPC parameters: ', arglist.vanLDPC_p, arglist.vanLDPC_pho , arglist.vanLDPC_gamma)
             interact_with_environments(env, trainers, steps, True)
 
 
@@ -304,9 +335,6 @@ if __name__=="__main__":
                 #print(num_train)
                 if num_train > arglist.num_train:
                     print('The mean time is', np.mean(train_time), 'The corresponding variance is', np.var(train_time))
-                    # rew_file_name = arglist.plots_dir + arglist.scenario + 'distributed_rewards.pkl'
-                    # with open(rew_file_name, 'wb') as fp:
-                    #     pickle.dump(final_episode_rewards, fp)
                     break
 
 
@@ -326,9 +354,11 @@ if __name__=="__main__":
                 for key in weight_key:
                     sum_weights = []
                     for k in range(weight_length):
+
                         weight = 0
                         for j, entry in enumerate(H[node_id -2]):
                             if (entry != 0):
+                                weights[j][key][k].resize(max_weight_shape)
                                 weight += entry*weights[j][key][k]
                         sum_weights.append(weight)
 
@@ -380,7 +410,7 @@ if __name__=="__main__":
                     comm.send(1, dest=id, tag=num_train)
 
                 start_encoding = time.time()
-                decoded_weights = code_scheme.decode(received_data, weight_length)
+                decoded_weights = code_scheme.decode(received_data, weight_length, weight_shape)
                 end_encoding = time.time()
 
 

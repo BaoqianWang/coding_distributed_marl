@@ -33,12 +33,12 @@ class ReplicationBased():
         #     self.H=np.vstack((self.H, m_identity))
 
 
-    def decode(self, received_data, weight_length):
+    def decode(self, received_data, weight_length, weight_shape):
         index_all = [data[0] for data in received_data]
 
         sub_index_combination = combinations(index_all, self.m)
         for sub_index in sub_index_combination:
-            if(matrix_rank(self.H[sub_index,:])==self.m):
+            if(matrix_rank(self.H[sub_index,:]) == self.m):
                 self.decode_H = np.linalg.inv(self.H[sub_index,:])
                 encoded_weight=[received_data[index_all.index(j)][1] for j in sub_index]
                 break
@@ -54,6 +54,7 @@ class ReplicationBased():
                     weight = 0
                     for i, entry in enumerate(self.decode_H[j]):
                         weight += entry*encoded_weight[i][key][k]
+                    weight.resize(weight_shape[j][key][k])
                     sum_weights.append(weight)
                 sum_weights_dict[key] = copy.deepcopy(sum_weights)
 

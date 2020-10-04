@@ -97,9 +97,9 @@ do
             sleep 1
             echo "start ${SchemeArray[i]}  scheme with scenario ${ScenarioArray[n]} straggler $j..."
             echo ""
-            mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name\
+            echo "mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name\
             python3 ../experiments/maddpg_coded_scheme.py --scenario ${ScenarioArray[n]} --num_straggler $j --num_learners ${NumLearnersArray[n]} --scheme\
-            ${SchemeArray[i]} >> ${SchemeArray[i]}_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumLearnersArray[n]}
+            ${SchemeArray[i]} >> ${SchemeArray[i]}_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumLearnersArray[n]}"
 
           fi
 
@@ -116,9 +116,9 @@ do
               host_name_LDPC="${host_name_LDPC},${NodeArray[o]}"
             done
 
-            mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_LDPC\
+            echo "mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_LDPC\
             python3 ../experiments/maddpg_coded_scheme.py --scenario ${ScenarioArray[n]} --num_straggler $j --num_learners $num_LDPC_learners --scheme VandermondeLDPC\
-             --vanLDPC_p ${NumVanLDPCpArray[n]}  --vanLDPC_pho ${NumVanLDPCphoArray[n]} --vanLDPC_gamma ${NumVanLDPCgammaArray[n]} >> ${SchemeArray[i]}_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${num_LDPC_learners}
+             --vanLDPC_p ${NumVanLDPCpArray[n]}  --vanLDPC_pho ${NumVanLDPCphoArray[n]} --vanLDPC_gamma ${NumVanLDPCgammaArray[n]} >> ${SchemeArray[i]}_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${num_LDPC_learners}"
 
             fi
 
@@ -127,8 +127,8 @@ do
       sleep 1
       echo "start uncoded scheme with scenario ${ScenarioArray[n]} straggler $j..."
       echo " "
-      mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
-      python3 ../experiments/maddpg_uncoded.py --scenario ${ScenarioArray[n]}  --num_straggler $j >> uncoded_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
+      echo "mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
+      python3 ../experiments/maddpg_uncoded.py --scenario ${ScenarioArray[n]}  --num_straggler $j >> uncoded_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${num_agents}"
 
     done
 done

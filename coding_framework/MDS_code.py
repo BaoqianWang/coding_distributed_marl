@@ -24,7 +24,7 @@ class MDS_code():
         #self.H = np.array([[1, 0, 1], [1, 0, 0], [0, 1, 1], [1,1,1]])#np.vander(x, self.n).transpose()
         self.H = np.vander(x, self.n).transpose()
 
-    def decode(self, received_data, weight_length):
+    def decode(self, received_data, weight_length, weight_shape):
         index_all = [data[0] for data in received_data]
 
         sub_index_combination = combinations(index_all, self.m)
@@ -45,6 +45,7 @@ class MDS_code():
                     weight = 0
                     for i, entry in enumerate(self.decode_H[j]):
                         weight += entry*encoded_weight[i][key][k]
+                    weight.resize(weight_shape[j][key][k])
                     sum_weights.append(weight)
                 sum_weights_dict[key] = copy.deepcopy(sum_weights)
 
