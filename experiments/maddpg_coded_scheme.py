@@ -6,8 +6,7 @@ import pickle
 import mpi4py
 mpi4py.rc.recv_mprobe = False
 from mpi4py import MPI
-# import dill
-# MPI.pickle.__init__(dill.dumps, dill.loads)
+
 
 import random
 import maddpg.common.tf_util as U
@@ -331,6 +330,7 @@ if __name__=="__main__":
 
 
             if(node_id in ACTOR):
+                print(num_train)
                 num_train += 1
                 #print(num_train)
                 if num_train > arglist.num_train:
@@ -403,6 +403,7 @@ if __name__=="__main__":
                     received_data.append(copy.deepcopy(data))
                     received_matrix.append(H[data[0]])
                     if(matrix_rank(np.asarray(received_matrix)) >= num_agents):
+                        print('Receive Done')
                         break
 
                 #print('enough')
@@ -411,6 +412,7 @@ if __name__=="__main__":
 
                 start_encoding = time.time()
                 decoded_weights = code_scheme.decode(received_data, weight_length, weight_shape)
+                print('Decode Done')
                 end_encoding = time.time()
 
 

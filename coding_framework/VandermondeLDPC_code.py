@@ -89,6 +89,7 @@ class VandermondeLDPC_code():
         self.variable_degrees = copy.deepcopy(self.backup_variable_degrees)
         self.check_indexes = copy.deepcopy(self.backup_check_indexes)
         received_index = [data[0] for data in received_data]
+        print(received_index)
         for index in self.check_indexes:
             temp_index = copy.deepcopy(index)
             for item in temp_index:
@@ -107,7 +108,7 @@ class VandermondeLDPC_code():
                 #print('variable_index', variable_index)
                 if len(variable_index) == 1 and agent_weight[variable_index[0]] is None:
                     agent_weight[variable_index[0]] = copy.deepcopy(data[1])
-
+                    print(variable_index[0])
                     for item in self.check_indexes[variable_index[0]]:
                         #print('item, check_indexes', item, self.check_indexes)
                         if len(self.variable_indexes[item])>1:
@@ -117,7 +118,7 @@ class VandermondeLDPC_code():
                                     #print(received_index)
                                     item_index = received_index.index(item)
                                     received_data[item_index][1][key][k] -=  data[1][key][k]
-
+        print('Done')
         for j in range(self.m):
             for key in self.weight_key:
                 for k in range(weight_length):
@@ -128,6 +129,6 @@ class VandermondeLDPC_code():
 
 
 if __name__=='__main__':
-    regular_ldpc_code = VandermondeLDPC_code(2, 3, 2)
+    regular_ldpc_code = VandermondeLDPC_code(3, 3, 2)
     print(regular_ldpc_code.H)
     print(regular_ldpc_code.H.shape[1])
