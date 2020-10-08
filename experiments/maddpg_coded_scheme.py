@@ -12,7 +12,6 @@ import random
 import maddpg.common.tf_util as U
 from maddpg.trainer.maddpg_coding_replay_memory import MADDPGAgentTrainer
 import tensorflow.contrib.layers as layers
-import time
 import json
 from coding_framework.MDS_code import MDS_code
 from coding_framework.ReplicationBased import ReplicationBased
@@ -56,6 +55,7 @@ def parse_args():
     parser.add_argument("--vanLDPC_p", type=int, default="0", help="LDPC_p")
     parser.add_argument("--vanLDPC_pho", type=int, default="0", help="LDPC_pho")
     parser.add_argument("--vanLDPC_gamma", type=int, default="0", help="LDPC_gamma")
+    parser.add_argument("--num_agents", type=int, default="0", help="num agents")
     return parser.parse_args()
 
 
@@ -75,7 +75,7 @@ def make_env(scenario_name, arglist, benchmark=False):
     # load scenario from script
     scenario = scenarios.load(scenario_name + ".py").Scenario()
     # create world
-    world = scenario.make_world()
+    world = scenario.make_world(arglist.num_agents)
     # create multiagent environment
     if benchmark:
         env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation, scenario.benchmark_data)

@@ -17,6 +17,8 @@ def parse_args():
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
+    parser.add_argument("--max_num_train", type=int, default=500, help="number of train")
+
     # Core training parameters
     parser.add_argument("--lr", type=float, default=1e-2, help="learning rate for Adam optimizer")
     parser.add_argument("--gamma", type=float, default=0.95, help="discount factor")
@@ -25,7 +27,7 @@ def parse_args():
     # Checkpointing
     parser.add_argument("--exp-name", type=str, default="maddpg", help="name of the experiment")
     parser.add_argument("--save-dir", type=str, default="/home/smile/maddpg/trained_policy/", help="directory in which training state and model should be saved")
-    parser.add_argument("--save-rate", type=int, default=1000, help="save model once every time this many episodes are completed")
+    parser.add_argument("--save-rate", type=int, default=200, help="save model once every time this many episodes are completed")
     parser.add_argument("--load-dir", type=str, default="", help="directory in which training state and model are loaded")
     # Evaluation
     parser.add_argument("--restore", action="store_true", default=False)
@@ -34,6 +36,8 @@ def parse_args():
     parser.add_argument("--benchmark-iters", type=int, default=100000, help="number of iterations run for benchmarking")
     parser.add_argument("--benchmark-dir", type=str, default="./benchmark_files/", help="directory where benchmark data is saved")
     parser.add_argument("--plots-dir", type=str, default="/home/smile/maddpg/learning_curves/", help="directory where plot data is saved")
+    parser.add_argument("--num_agents", type=int, default="0", help="num agents")
+    parser.add_argument("--num_straggler", type=int, default="0", help="num straggler")
     return parser.parse_args()
 
 def mlp_model(input, num_outputs, scope, reuse=False, num_units=64, rnn_cell=None):
@@ -52,7 +56,7 @@ def make_env(scenario_name, arglist, benchmark=False):
     # load scenario from script
     scenario = scenarios.load(scenario_name + ".py").Scenario()
     # create world
-    world = scenario.make_world()
+    world = scenario.make_world(arglist.num_agents)
     # create multiagent environment
     if benchmark:
         env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation, scenario.benchmark_data)
@@ -74,6 +78,35 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
             local_q_func=(arglist.good_policy=='ddpg')))
     return trainers
 
+def interact_with_environments(env, trainers):
+
+    obs_n = env.reset()
+    episode_rewards = [0.0]
+    step = 0
+    while True:
+        action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
+        # environment step
+        new_obs_n, rew_n, done_n, info_n = env.step(action_n)
+        step += 1
+        done = all(done_n)
+        terminal = (step >= arglist.max_episode_len)
+        # collect experience
+        for i, agent in enumerate(trainers):
+            agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+
+        obs_n = new_obs_n
+
+        for i, rew in enumerate(rew_n):
+            episode_rewards[-1] += rew
+
+        if done or terminal:
+            obs_n = env.reset()
+            step = 0
+
+        if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
+            break
+
+    return
 
 def train(arglist):
     with U.single_threaded_session():
@@ -106,10 +139,16 @@ def train(arglist):
         obs_n = env.reset()
         episode_step = 0
         train_step = 0
-        t_start = time.time()
-
+        train_time = []
+        num_train = 0
+        print('Coded computation scheme: ', 'Centralized Training')
+        print('Scenario: ', arglist.scenario)
+        print('Number of agents: ', arglist.num_agents)
         print('Starting iterations...')
 
+        #Collect enough data for memory
+        interact_with_environments(env, trainers)
+        t_start = time.time()
         while True:
             # get action
             action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
@@ -121,7 +160,7 @@ def train(arglist):
             terminal = (episode_step >= arglist.max_episode_len)
             # collect experience
             for i, agent in enumerate(trainers):
-                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i], terminal)
+                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
             obs_n = new_obs_n
 
             for i, rew in enumerate(rew_n):
@@ -138,6 +177,10 @@ def train(arglist):
 
             # increment global step counter
             train_step += 1
+            if (train_step % 100 == 0):
+                if(arglist.num_straggler):
+                    time.sleep(0.25)
+                num_train += 1
 
             # for benchmarking learned policies
             if arglist.benchmark:
@@ -168,16 +211,13 @@ def train(arglist):
 
 
             # save model, display training output
-            if terminal and (len(episode_rewards) % arglist.save_rate == 0):
+            if terminal and  len(episode_rewards)%arglist.save_rate==0:
                 #U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
-                if num_adversaries == 0:
-                    print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(
-                        train_step, len(episode_rewards), np.mean(episode_rewards[-arglist.save_rate:]), round(time.time()-t_start, 3)))
-                else:
-                    print("steps: {}, episodes: {}, mean episode reward: {}, agent episode reward: {}, time: {}".format(
-                        train_step, len(episode_rewards), np.mean(episode_rewards[-arglist.save_rate:]),
-                        [np.mean(rew[-arglist.save_rate:]) for rew in agent_rewards], round(time.time()-t_start, 3)))
+                t_end = time.time()
+                print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(
+                    num_train, len(episode_rewards), np.mean(episode_rewards[-arglist.save_rate:]), round(t_end-t_start, 3)))
+                train_time.append(round(t_end-t_start, 3))
                 t_start = time.time()
                 # Keep track of final episode reward
                 final_ep_rewards.append(np.mean(episode_rewards[-arglist.save_rate:]))
@@ -185,7 +225,8 @@ def train(arglist):
                     final_ep_ag_rewards.append(np.mean(rew[-arglist.save_rate:]))
 
             # saves final episode reward for plotting training curve later
-            if len(episode_rewards) > arglist.num_episodes:
+            if num_train > arglist.max_num_train:
+                print('The mean time is', np.mean(train_time), 'The corresponding variance is', np.var(train_time))
                 rew_file_name = arglist.plots_dir + arglist.scenario + '_rewards.pkl'
                 with open(rew_file_name, 'wb') as fp:
                     pickle.dump(final_ep_rewards, fp)

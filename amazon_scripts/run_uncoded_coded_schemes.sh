@@ -10,7 +10,7 @@ NumVanLDPCgammaArray=()
 
 num_node=0
 num_scheme=0
-max_straggler=3
+max_straggler=1
 num_scenario=0
 num_LDPC_nodes=0
 num_LDPC_learners=0
@@ -90,15 +90,28 @@ do
     #Start Different Computation Schemes
     for((j=0;j<=max_straggler;j++))
     do
+
+      sleep 1
+      echo "start uncoded scheme with scenario ${ScenarioArray[n]} straggler $j..."
+      echo " "
+      mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
+      python3 ../experiments/maddpg_uncoded.py --scenario simple_spread  --num_agents ${NumAgentArray[n]} --num_straggler $j >> uncoded_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
+
+      sleep 1
+      echo "start centralized scheme with scenario ${ScenarioArray[n]} straggler $j..."
+      echo " "
+      python3 train.py --scenario simple_spread --num_agents ${NumAgentArray[n]} --num_straggler $j >> centralized_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
+
       for((i=1;i<=num_scheme;i++))
       do
+
         if (( $i < 4))
             then
             sleep 1
             echo "start ${SchemeArray[i]}  scheme with scenario ${ScenarioArray[n]} straggler $j..."
             echo ""
             mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name\
-            python3 ../experiments/maddpg_coded_scheme.py --scenario ${ScenarioArray[n]} --num_straggler $j --num_learners ${NumLearnersArray[n]} --scheme\
+            python3 ../experiments/maddpg_coded_scheme.py --scenario simple_spread --num_agents ${NumAgentArray[n]} --num_straggler $j --num_learners ${NumLearnersArray[n]} --scheme\
             ${SchemeArray[i]} >> ${SchemeArray[i]}_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumLearnersArray[n]}
 
           fi
@@ -123,12 +136,6 @@ do
         #     fi
 
       done
-
-      sleep 1
-      echo "start uncoded scheme with scenario ${ScenarioArray[n]} straggler $j..."
-      echo " "
-      mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
-      python3 ../experiments/maddpg_uncoded.py --scenario ${ScenarioArray[n]}  --num_straggler $j >> uncoded_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
 
     done
 done

@@ -160,7 +160,7 @@ class MADDPGAgentTrainer(AgentTrainer):
     def action(self, obs):
         return self.act(obs[None])[0]
 
-    def experience(self, obs, act, rew, new_obs, done, terminal):
+    def experience(self, obs, act, rew, new_obs, done):
         # Store transition in the replay buffer.
         self.replay_buffer.add(obs, act, rew, new_obs, float(done))
 
@@ -169,9 +169,9 @@ class MADDPGAgentTrainer(AgentTrainer):
 
     def update(self, agents, t):
         #print('start updating')
-        if len(self.replay_buffer) < self.max_replay_buffer_len: # replay buffer is not large enough
-            #print("not large enough")
-            return
+        # if len(self.replay_buffer) < self.max_replay_buffer_len: # replay buffer is not large enough
+        #     #print("not large enough")
+        #     return
         if not t % 100 == 0:  # only update every 100 steps
             return
 
