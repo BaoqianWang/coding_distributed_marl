@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
-    parser.add_argument("--max_num_train", type=int, default=500, help="number of train")
+    parser.add_argument("--max_num_train", type=int, default=50, help="number of train")
 
     # Core training parameters
     parser.add_argument("--lr", type=float, default=1e-2, help="learning rate for Adam optimizer")
@@ -27,7 +27,7 @@ def parse_args():
     # Checkpointing
     parser.add_argument("--exp-name", type=str, default="maddpg", help="name of the experiment")
     parser.add_argument("--save-dir", type=str, default="/home/smile/maddpg/trained_policy/", help="directory in which training state and model should be saved")
-    parser.add_argument("--save-rate", type=int, default=200, help="save model once every time this many episodes are completed")
+    parser.add_argument("--save-rate", type=int, default=20, help="save model once every time this many episodes are completed")
     parser.add_argument("--load-dir", type=str, default="", help="directory in which training state and model are loaded")
     # Evaluation
     parser.add_argument("--restore", action="store_true", default=False)
@@ -227,13 +227,13 @@ def train(arglist):
             # saves final episode reward for plotting training curve later
             if num_train > arglist.max_num_train:
                 print('The mean time is', np.mean(train_time), 'The corresponding variance is', np.var(train_time))
-                rew_file_name = arglist.plots_dir + arglist.scenario + '_rewards.pkl'
-                with open(rew_file_name, 'wb') as fp:
-                    pickle.dump(final_ep_rewards, fp)
-                agrew_file_name = arglist.plots_dir + arglist.scenario + '_agrewards.pkl'
-                with open(agrew_file_name, 'wb') as fp:
-                    pickle.dump(final_ep_ag_rewards, fp)
-                print('...Finished total of {} episodes.'.format(len(episode_rewards)))
+                # rew_file_name = arglist.plots_dir + arglist.scenario + '_rewards.pkl'
+                # with open(rew_file_name, 'wb') as fp:
+                #     pickle.dump(final_ep_rewards, fp)
+                # agrew_file_name = arglist.plots_dir + arglist.scenario + '_agrewards.pkl'
+                # with open(agrew_file_name, 'wb') as fp:
+                #     pickle.dump(final_ep_ag_rewards, fp)
+                # print('...Finished total of {} episodes.'.format(len(episode_rewards)))
                 break
 
 

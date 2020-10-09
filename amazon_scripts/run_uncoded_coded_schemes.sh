@@ -92,15 +92,17 @@ do
     do
 
       sleep 1
+      echo "start centralized scheme with scenario ${ScenarioArray[n]} straggler $j..."
+      echo " "
+      python3 ../experiments/train.py --scenario simple_spread --num_agents ${NumAgentArray[n]} --num_straggler $j >> centralized_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
+
+
+      sleep 1
       echo "start uncoded scheme with scenario ${ScenarioArray[n]} straggler $j..."
       echo " "
       mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
       python3 ../experiments/maddpg_uncoded.py --scenario simple_spread  --num_agents ${NumAgentArray[n]} --num_straggler $j >> uncoded_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
 
-      sleep 1
-      echo "start centralized scheme with scenario ${ScenarioArray[n]} straggler $j..."
-      echo " "
-      python3 train.py --scenario simple_spread --num_agents ${NumAgentArray[n]} --num_straggler $j >> centralized_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
 
       for((i=1;i<=num_scheme;i++))
       do

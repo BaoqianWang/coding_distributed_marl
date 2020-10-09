@@ -28,7 +28,7 @@ def parse_args():
     parser.add_argument("--max-episode-len", type=int, default=25, help="maximum episode length")
     parser.add_argument("--num-episodes", type=int, default=20000, help="number of episodes")
     parser.add_argument("--train-period", type=int, default=1000, help="frequency of updating parameters")
-    parser.add_argument("--num_train", type=int, default=500, help="number of train")
+    parser.add_argument("--num_train", type=int, default=50, help="number of train")
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
@@ -41,7 +41,7 @@ def parse_args():
     # Checkpointing
     parser.add_argument("--exp-name", type=str, default="maddpg", help="name of the experiment")
     parser.add_argument("--save-dir", type=str, default="/tmp/policy/", help="directory in which training state and model should be saved")
-    parser.add_argument("--save-rate", type=int, default=200, help="save model once every time this many episodes are completed")
+    parser.add_argument("--save-rate", type=int, default=20, help="save model once every time this many episodes are completed")
     parser.add_argument("--load-dir", type=str, default="", help="directory in which training state and model are loaded")
     # Evaluation
     parser.add_argument("--restore", action="store_true", default=False)
@@ -403,7 +403,6 @@ if __name__=="__main__":
                     received_data.append(copy.deepcopy(data))
                     received_matrix.append(H[data[0]])
                     if(matrix_rank(np.asarray(received_matrix)) >= num_agents):
-                        print('Receive Done')
                         break
 
                 #print('enough')
@@ -412,7 +411,6 @@ if __name__=="__main__":
 
                 start_encoding = time.time()
                 decoded_weights = code_scheme.decode(received_data, weight_length, weight_shape)
-                print('Decode Done')
                 end_encoding = time.time()
 
 
