@@ -98,15 +98,17 @@ class VandermondeLDPC_code():
 
         agent_weight = [None]*self.m
         iteration = 0
-        while None in agent_weight:
+        need_iteration = 1
+        while need_iteration in agent_weight:
             #print('iteration', iteration)
             iteration += 1
-
+            need_iteration = 0 #To indicate if further peeling decoding algorithm is needed
             for i, data in enumerate(received_data):
                 #print('learner index', data[0])
                 variable_index = copy.deepcopy(self.variable_indexes[data[0]])
                 #print('variable_index', variable_index)
                 if len(variable_index) == 1 and agent_weight[variable_index[0]] is None:
+                    need_iteration = 1
                     agent_weight[variable_index[0]] = copy.deepcopy(data[1])
                     print(variable_index[0])
                     for item in self.check_indexes[variable_index[0]]:
@@ -120,6 +122,7 @@ class VandermondeLDPC_code():
                                     received_data[item_index][1][key][k] -=  data[1][key][k]
         print('Done')
         for j in range(self.m):
+            if agent_weight[j] is None: continue
             for key in self.weight_key:
                 for k in range(weight_length):
                     agent_weight[j][key][k].resize(weight_shape[j][key][k])

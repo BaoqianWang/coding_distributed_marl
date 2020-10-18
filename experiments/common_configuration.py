@@ -5,59 +5,7 @@ import maddpg.common.tf_util as U
 from maddpg.trainer.maddpg import MADDPGAgentTrainer
 import tensorflow.contrib.layers as layers
 
-def interact_with_environments(env, trainers, steps, first_time = True):
 
-    obs_n = env.reset()
-    if (first_time):
-        episode_rewards = [0.0]
-        step = 0
-        while True:
-            action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
-            # environment step
-            new_obs_n, rew_n, done_n, info_n = env.step(action_n)
-            step += 1
-            done = all(done_n)
-            terminal = (step >= arglist.max_episode_len)
-            # collect experience
-            for i, agent in enumerate(trainers):
-                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
-
-            obs_n = new_obs_n
-
-            for i, rew in enumerate(rew_n):
-                episode_rewards[-1] += rew
-
-            if done or terminal:
-                obs_n = env.reset()
-                step = 0
-
-            if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
-                break
-    else:
-        episode_rewards = [0.0]
-        step = 0
-        for _ in range(steps):
-            action_n = [agent.action(obs) for agent, obs in zip(trainers, obs_n)]
-            # environment step
-            new_obs_n, rew_n, done_n, info_n = env.step(action_n)
-            step += 1
-            done = all(done_n)
-            terminal = (step >= arglist.max_episode_len)
-            # collect experience
-            for i, agent in enumerate(trainers):
-                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
-
-            obs_n = new_obs_n
-
-            for i, rew in enumerate(rew_n):
-                episode_rewards[-1] += rew
-
-            if done or terminal:
-                episode_rewards.append(0)
-                obs_n = env.reset()
-                step = 0
-
-    return episode_rewards
 
 def parse_args():
     parser = argparse.ArgumentParser("Reinforcement Learning experiments for multiagent environments")
@@ -68,7 +16,10 @@ def parse_args():
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
-    parser.add_argument("--max_num_train", type=int, default=10000, help="number of train")
+
+
+    parser.add_argument("--max_num_train", type=int, default=4000, help="number of train")
+    parser.add_argument("--num_train", type=int, default=4000, help="number of train")
 
     # Core training parameters
     parser.add_argument("--lr", type=float, default=1e-2, help="learning rate for Adam optimizer")
@@ -90,6 +41,11 @@ def parse_args():
     parser.add_argument("--num_agents", type=int, default="0", help="num agents")
     parser.add_argument("--num_straggler", type=int, default="0", help="num straggler")
     parser.add_argument("--save_rewards", action="store_true", default=False)
+    parser.add_argument("--num_learners", type=int, default="0", help="num learners")
+    parser.add_argument("--vanLDPC_p", type=int, default="0", help="LDPC_p")
+    parser.add_argument("--vanLDPC_pho", type=int, default="0", help="LDPC_pho")
+    parser.add_argument("--vanLDPC_gamma", type=int, default="0", help="LDPC_gamma")
+
     return parser.parse_args()
 
 

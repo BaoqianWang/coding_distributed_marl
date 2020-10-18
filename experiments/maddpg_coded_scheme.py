@@ -277,15 +277,17 @@ if __name__=="__main__":
                     received_data.append(copy.deepcopy(data))
                     received_matrix.append(H[data[0]])
                     if(matrix_rank(np.asarray(received_matrix)) >= num_agents):
-                        break
+                        decoded_weights = code_scheme.decode(received_data, weight_length, weight_shape)
+                        if None is not in decoded_weights
+                            break
 
                 #print('enough')
                 for id  in LEARNERS:
                     comm.send(1, dest=id, tag=num_train)
 
-                start_encoding = time.time()
-                decoded_weights = code_scheme.decode(received_data, weight_length, weight_shape)
-                end_encoding = time.time()
+                # start_encoding = time.time()
+                # decoded_weights = code_scheme.decode(received_data, weight_length, weight_shape)
+                # end_encoding = time.time()
 
 
                 for i in range(num_agents):

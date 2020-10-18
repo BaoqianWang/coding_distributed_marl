@@ -9,7 +9,72 @@ import maddpg.common.tf_util as U
 from maddpg.trainer.maddpg_coding_replay_memory import MADDPGAgentTrainer
 import tensorflow.contrib.layers as layers
 import json
-from experiments.common_configuration import parse_args, mlp_model, make_env, get_trainers, interact_with_environments
+from experiments.common_configuration import parse_args, mlp_model, make_env
+
+def interact_with_environments(env, trainers, steps, first_time = True):
+
+    obs_n = env.reset()
+    if (first_time):
+        episode_rewards = [0.0]
+        step = 0
+        while True:
+            action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
+            # environment step
+            new_obs_n, rew_n, done_n, info_n = env.step(action_n)
+            step += 1
+            done = all(done_n)
+            terminal = (step >= arglist.max_episode_len)
+            # collect experience
+            for i, agent in enumerate(trainers):
+                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+
+            obs_n = new_obs_n
+
+            for i, rew in enumerate(rew_n):
+                episode_rewards[-1] += rew
+
+            if done or terminal:
+                obs_n = env.reset()
+                step = 0
+
+            if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
+                break
+    else:
+        episode_rewards = [0.0]
+        step = 0
+        for _ in range(steps):
+            action_n = [agent.action(obs) for agent, obs in zip(trainers, obs_n)]
+            # environment step
+            new_obs_n, rew_n, done_n, info_n = env.step(action_n)
+            step += 1
+            done = all(done_n)
+            terminal = (step >= arglist.max_episode_len)
+            # collect experience
+            for i, agent in enumerate(trainers):
+                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+
+            obs_n = new_obs_n
+
+            for i, rew in enumerate(rew_n):
+                episode_rewards[-1] += rew
+
+            if done or terminal:
+                episode_rewards.append(0)
+                obs_n = env.reset()
+                step = 0
+
+    return episode_rewards
+
+def get_trainers(env, num_agents, name, obs_shape_n, arglist, session):
+    trainers = []
+    model = mlp_model
+    trainer = MADDPGAgentTrainer
+    for i in range(num_agents):
+        trainers.append(trainer(
+            name+"agent_%d" % i, model, obs_shape_n, session,env.action_space, i, arglist,
+            local_q_func=(arglist.good_policy=='ddpg')))
+
+    return trainers
 
 
 
