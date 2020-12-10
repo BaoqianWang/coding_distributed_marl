@@ -217,7 +217,7 @@ if __name__== "__main__":
                 weights = trainers[node_id-2].get_weigths()
 
                 if(node_id in STRAGGLER):
-                    time.sleep(0.25)
+                    time.sleep(1)
 
                 start_worker_weights=time.time()
                 comm.send(weights, dest=0,tag=num_train)

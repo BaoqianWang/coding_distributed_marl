@@ -10,7 +10,7 @@ NumVanLDPCgammaArray=()
 
 num_node=0
 num_scheme=0
-max_straggler=1
+max_straggler=10
 num_scenario=0
 num_LDPC_nodes=0
 num_LDPC_learners=0
@@ -86,56 +86,54 @@ do
       host_name_uncoded="${host_name_uncoded},${NodeArray[i]}"
     done
 
+    sleep 1
+    echo "start centralized scheme with scenario ${ScenarioArray[n]} straggler ..."
+    echo " "
+    python3 ../experiments/train.py --scenario simple_adversary --num_agents ${NumAgentArray[n]} --num_straggler 0 >> centralized_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
 
     #Start Different Computation Schemes
-    for((j=0;j<=max_straggler;j++))
+    for((j=0;j<=max_straggler;j=j+5))
     do
-
-      sleep 1
-      echo "start centralized scheme with scenario ${ScenarioArray[n]} straggler $j..."
-      echo " "
-      python3 ../experiments/train.py --scenario simple_spread --num_agents ${NumAgentArray[n]} --num_straggler $j >> centralized_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
 
 
       sleep 1
       echo "start uncoded scheme with scenario ${ScenarioArray[n]} straggler $j..."
       echo " "
       mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
-      python3 ../experiments/maddpg_uncoded.py --scenario simple_spread  --num_agents ${NumAgentArray[n]} --num_straggler $j >> uncoded_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
+      python3 ../experiments/maddpg_uncoded.py --scenario simple_adversary  --num_agents ${NumAgentArray[n]} --num_straggler $j >> uncoded_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumAgentArray[n]}
 
 
       for((i=1;i<=num_scheme;i++))
       do
-
         if (( $i < 4))
             then
             sleep 1
             echo "start ${SchemeArray[i]}  scheme with scenario ${ScenarioArray[n]} straggler $j..."
             echo ""
             mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name\
-            python3 ../experiments/maddpg_coded_scheme.py --scenario simple_spread --num_agents ${NumAgentArray[n]} --num_straggler $j --num_learners ${NumLearnersArray[n]} --scheme\
+            python3 ../experiments/maddpg_coded_scheme.py --scenario simple_adversary --num_agents ${NumAgentArray[n]} --num_straggler $j --num_learners ${NumLearnersArray[n]} --scheme\
             ${SchemeArray[i]} >> ${SchemeArray[i]}_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${NumLearnersArray[n]}
 
           fi
 
-        # if (( $i  == 4 ))
-        #     then
-        #     echo "start ${SchemeArray[i]}  scheme with scenario ${ScenarioArray[n]} straggler $j..."
-        #     echo " "
-        #     host_name_LDPC="${NodeArray[1]}"
-        #     ((num_LDPC_nodes=${NumVanLDPCpArray[n]}*${NumVanLDPCphoArray[n]}+2))
-        #     ((num_LDPC_learners=${NumVanLDPCpArray[n]}*${NumVanLDPCphoArray[n]}))
-        #
-        #     for((o=2;o<=num_LDPC_nodes;o++))
-        #     do
-        #       host_name_LDPC="${host_name_LDPC},${NodeArray[o]}"
-        #     done
-        #
-        #     mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_LDPC\
-        #     python3 ../experiments/maddpg_coded_scheme.py --scenario ${ScenarioArray[n]} --num_straggler $j --num_learners $num_LDPC_learners --scheme VandermondeLDPC\
-        #      --vanLDPC_p ${NumVanLDPCpArray[n]}  --vanLDPC_pho ${NumVanLDPCphoArray[n]} --vanLDPC_gamma ${NumVanLDPCgammaArray[n]} >> ${SchemeArray[i]}_num_straggler_${j}_${ScenarioArray[n]}_num_learners_${num_LDPC_learners}
-        #
-        #     fi
+        if (( $i  == 4 ))
+            then
+            echo "start ${SchemeArray[i]}  scheme with scenario ${ScenarioArray[n]} straggler $j..."
+            echo " "
+            host_name_LDPC="${NodeArray[1]}"
+            ((num_LDPC_nodes=${NumVanLDPCpArray[n]}*${NumVanLDPCphoArray[n]}+2))
+            ((num_LDPC_learners=${NumVanLDPCpArray[n]}*${NumVanLDPCphoArray[n]}))
+
+            for((o=2;o<=num_LDPC_nodes;o++))
+            do
+              host_name_LDPC="${host_name_LDPC},${NodeArray[o]}"
+            done
+
+            mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_LDPC\
+            python3 ../experiments/maddpg_coded_scheme.py --scenario simple_adversary --num_straggler $j --num_learners $num_LDPC_learners --scheme VandermondeLDPC\
+             --vanLDPC_p ${NumVanLDPCpArray[n]}  --vanLDPC_pho ${NumVanLDPCphoArray[n]} --num_agents ${NumAgentArray[n]} --vanLDPC_gamma ${NumVanLDPCgammaArray[n]} >> ${SchemeArray[i]}_num_straggler_${j}_simple_adversary_num_agents_${NumAgentArray[n]}
+
+            fi
 
       done
 

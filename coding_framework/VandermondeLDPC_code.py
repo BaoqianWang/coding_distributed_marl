@@ -84,12 +84,15 @@ class VandermondeLDPC_code():
 
         return
 
-    def decode(self, received_data, weight_length, weight_shape):
+    def decode(self, real_received_data, weight_length, weight_shape):
         self.variable_indexes = copy.deepcopy(self.backup_variable_indexes)
         self.variable_degrees = copy.deepcopy(self.backup_variable_degrees)
         self.check_indexes = copy.deepcopy(self.backup_check_indexes)
+        received_data = copy.deepcopy(real_received_data)
         received_index = [data[0] for data in received_data]
-        print(received_index)
+
+
+        #print(received_index)
         for index in self.check_indexes:
             temp_index = copy.deepcopy(index)
             for item in temp_index:
@@ -99,7 +102,7 @@ class VandermondeLDPC_code():
         agent_weight = [None]*self.m
         iteration = 0
         need_iteration = 1
-        while need_iteration in agent_weight:
+        while (need_iteration):
             #print('iteration', iteration)
             iteration += 1
             need_iteration = 0 #To indicate if further peeling decoding algorithm is needed
@@ -110,7 +113,8 @@ class VandermondeLDPC_code():
                 if len(variable_index) == 1 and agent_weight[variable_index[0]] is None:
                     need_iteration = 1
                     agent_weight[variable_index[0]] = copy.deepcopy(data[1])
-                    print(variable_index[0])
+
+                    #print(variable_index[0])
                     for item in self.check_indexes[variable_index[0]]:
                         #print('item, check_indexes', item, self.check_indexes)
                         if len(self.variable_indexes[item])>1:
@@ -120,7 +124,7 @@ class VandermondeLDPC_code():
                                     #print(received_index)
                                     item_index = received_index.index(item)
                                     received_data[item_index][1][key][k] -=  data[1][key][k]
-        print('Done')
+        #print('Done')
         for j in range(self.m):
             if agent_weight[j] is None: continue
             for key in self.weight_key:
@@ -132,6 +136,6 @@ class VandermondeLDPC_code():
 
 
 if __name__=='__main__':
-    regular_ldpc_code = VandermondeLDPC_code(3, 3, 2)
-    print(regular_ldpc_code.H)
-    print(regular_ldpc_code.H.shape[1])
+    regular_ldpc_code = VandermondeLDPC_code(3, 5, 3)
+    print('Encoding matrix', regular_ldpc_code.H)
+    print('Encoding matrix shape', regular_ldpc_code.H.shape[1])

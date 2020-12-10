@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/smile/maddpg/trained_policy/MDS/"
+all_model_checkpoint_paths: "/home/smile/maddpg/trained_policy/MDS/"

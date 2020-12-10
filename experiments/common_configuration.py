@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument("--num-episodes", type=int, default=20000, help="number of episodes")
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
-    parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
+    parser.add_argument("--adv-policy", type=str, default="ddpg", help="policy of adversaries")
 
 
     parser.add_argument("--max_num_train", type=int, default=4000, help="number of train")
@@ -28,6 +28,7 @@ def parse_args():
     parser.add_argument("--num-units", type=int, default=64, help="number of units in the mlp")
     # Checkpointing
     parser.add_argument("--exp-name", type=str, default="maddpg", help="name of the experiment")
+    parser.add_argument("--scheme", type=str, default="MDS", help="name of the computation scheme")
     parser.add_argument("--save-dir", type=str, default="/home/smile/maddpg/trained_policy/", help="directory in which training state and model should be saved")
     parser.add_argument("--save-rate", type=int, default=1000, help="save model once every time this many episodes are completed")
     parser.add_argument("--load-dir", type=str, default="", help="directory in which training state and model are loaded")
@@ -45,7 +46,6 @@ def parse_args():
     parser.add_argument("--vanLDPC_p", type=int, default="0", help="LDPC_p")
     parser.add_argument("--vanLDPC_pho", type=int, default="0", help="LDPC_pho")
     parser.add_argument("--vanLDPC_gamma", type=int, default="0", help="LDPC_gamma")
-
     return parser.parse_args()
 
 

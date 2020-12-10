@@ -18,4 +18,4 @@
 python3 ../experiments/train.py --num_agents 8 --scenario simple_spread
 
 
-mpirun -n 10 python3 ../experiments/maddpg_uncoded.py --scenario simple_spread --num_agents 8
+#mpirun -n 10 python3 ../experiments/maddpg_uncoded.py --scenario simple_spread --num_agents 8

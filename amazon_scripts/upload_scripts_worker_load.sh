@@ -36,14 +36,11 @@ done
 # Transfer environments file
 for ((i=1;i<=num_nodes;i++))
 do
-    scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  /home/smile/multiagent-particle-envs/multiagent/scenarios/simple_spread.py ubuntu@${ARRAY[i]}:~/multi-envs/multiagent/scenarios/
+    scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  /home/smile/multiagent-particle-envs/multiagent/scenarios/simple_push.py ubuntu@${ARRAY[i]}:~/multi-envs/multiagent/scenarios/
     echo "Transfer $i to $line Done "
 done
 
-
-
-
-# Transfer amazon scripts
+# Transfer coding framework file
 filename2='home_files'
 while read line; do
   for ((i=1;i<=num_nodes;i++))
@@ -52,3 +49,15 @@ while read line; do
       echo "Transfer $i to $line Done "
   done
 done < $filename2
+
+
+
+# Transfer amazon scripts
+# filename3='coding_files'
+# while read line; do
+#   for ((i=1;i<=num_nodes;i++))
+#   do
+#       scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  $line ubuntu@${ARRAY[i]}:~/maddpg/coding_framework/
+#       echo "Transfer $i to $line Done "
+#   done
+# done < $filename3

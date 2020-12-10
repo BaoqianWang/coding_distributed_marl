@@ -8,7 +8,7 @@ import maddpg.common.tf_util as U
 from maddpg.trainer.maddpg import MADDPGAgentTrainer
 import tensorflow.contrib.layers as layers
 from experiments.common_configuration import parse_args, mlp_model, make_env, get_trainers
-
+import imageio
 
 
 
@@ -33,7 +33,6 @@ def interact_with_environments(env, trainers):
 
         for i, rew in enumerate(rew_n):
             episode_rewards[-1] += rew
-
         if done or terminal:
             obs_n = env.reset()
             step = 0
@@ -51,7 +50,7 @@ def train(arglist):
         env = make_env(arglist.scenario, arglist, arglist.benchmark)
         # Create agent trainers
         obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
-        num_adversaries = min(env.n, arglist.num_adversaries)
+        num_adversaries = min(env.n, 1)
         trainers = get_trainers(env, num_adversaries, obs_shape_n, arglist)
         print('Using good policy {} and adv policy {}'.format(arglist.good_policy, arglist.adv_policy))
 
@@ -82,8 +81,12 @@ def train(arglist):
         print('Starting iterations...')
 
         #Collect enough data for memory
-        interact_with_environments(env, trainers)
+        if not arglist.display:
+            interact_with_environments(env, trainers)
+
         t_start = time.time()
+        k = 1
+        frames = []
         while True:
             # get action
             action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
@@ -114,7 +117,7 @@ def train(arglist):
             train_step += 1
             if (train_step % 100 == 0):
                 if(arglist.num_straggler):
-                    time.sleep(0.25)
+                    time.sleep(1)
                 num_train += 1
 
             # for benchmarking learned policies
@@ -130,9 +133,20 @@ def train(arglist):
                 continue
 
             # for displaying learned policies
+
+
             if arglist.display:
                 time.sleep(0.1)
-                env.render()
+                #env.render()
+                k+=1
+                frames.append(env.render('rgb_array')[0])
+                if (terminal or done):
+                    imageio.mimsave('test%d.gif' %k, frames, duration=0.15)
+                    frames=[]
+
+                if( k>= 200):
+                    #imageio.mimsave('test.gif', frames, duration=1)
+                    break
                 continue
 
             # update all trainers, if not in display or benchmark mode
@@ -147,7 +161,7 @@ def train(arglist):
 
             # save model, display training output
             if terminal and  len(episode_rewards)%arglist.save_rate==0:
-                #U.save_state(arglist.save_dir, saver=saver)
+                U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
                 t_end = time.time()
                 print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(
