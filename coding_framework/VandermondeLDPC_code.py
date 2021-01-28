@@ -129,6 +129,7 @@ class VandermondeLDPC_code():
 
 
 if __name__=='__main__':
-    regular_ldpc_code = VandermondeLDPC_code(3, 3, 2)
+    #regular_ldpc_code = VandermondeLDPC_code(3, 3, 2)
+    regular_ldpc_code = VandermondeLDPC_code(2, 3, 2)
     print(regular_ldpc_code.H)
     print(regular_ldpc_code.H.shape[1])
