@@ -80,33 +80,40 @@ def get_trainers(env, num_adversaries, obs_shape_n, arglist):
 
 def interact_with_environments(env, trainers):
 
-    obs_n = env.reset()
+    obs_n, info_n = env.reset()
     episode_rewards = [0.0]
     step = 0
     while True:
+        #print('observation', obs_n)
         action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
+        #print(action_n)
         # environment step
-        new_obs_n, rew_n, done_n, info_n = env.step(action_n)
+        new_obs_n, rew_n, done_n, next_info_n = env.step(action_n)
         step += 1
         done = all(done_n)
         terminal = (step >= arglist.max_episode_len)
         # collect experience
         for i, agent in enumerate(trainers):
-            agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+            agent.experience(info_n[i], obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i], next_info_n[i])
+        #print('Observation', obs_n, 'Neighbor information', info_n)
 
         obs_n = new_obs_n
+        info_n = next_info_n
 
         for i, rew in enumerate(rew_n):
             episode_rewards[-1] += rew
 
         if done or terminal:
-            obs_n = env.reset()
+            obs_n, info_n = env.reset()
             step = 0
-
+        ## !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        ## !!!!!!!!!!
         if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
             break
 
     return
+
+
 
 def train(arglist):
     with U.single_threaded_session():
@@ -136,7 +143,7 @@ def train(arglist):
         final_ep_ag_rewards = []  # agent rewards for training curve
         agent_info = [[[]]]  # placeholder for benchmarking info
         saver = tf.train.Saver()
-        obs_n = env.reset()
+
         episode_step = 0
         train_step = 0
         train_time = []
@@ -148,27 +155,29 @@ def train(arglist):
 
         #Collect enough data for memory
         interact_with_environments(env, trainers)
+        obs_n, info_n = env.reset()
         t_start = time.time()
         while True:
             # get action
             action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
             #print(action_n)
             # environment step
-            new_obs_n, rew_n, done_n, info_n = env.step(action_n)
+            new_obs_n, rew_n, done_n, next_info_n = env.step(action_n)
             episode_step += 1
             done = all(done_n)
             terminal = (episode_step >= arglist.max_episode_len)
             # collect experience
             for i, agent in enumerate(trainers):
-                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+                agent.experience(info_n[i], obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i], next_info_n[i])
             obs_n = new_obs_n
+            info_n = next_info_n
 
             for i, rew in enumerate(rew_n):
                 episode_rewards[-1] += rew
                 agent_rewards[i][-1] += rew
 
             if done or terminal:
-                obs_n = env.reset()
+                obs_n, info_n = env.reset()
                 episode_step = 0
                 episode_rewards.append(0)
                 for a in agent_rewards:
@@ -183,16 +192,16 @@ def train(arglist):
                 num_train += 1
 
             # for benchmarking learned policies
-            if arglist.benchmark:
-                for i, info in enumerate(info_n):
-                    agent_info[-1][i].append(info_n['n'])
-                if train_step > arglist.benchmark_iters and (done or terminal):
-                    file_name = arglist.benchmark_dir + arglist.exp_name + '.pkl'
-                    print('Finished benchmarking, now saving...')
-                    with open(file_name, 'wb') as fp:
-                        pickle.dump(agent_info[:-1], fp)
-                    break
-                continue
+            # if arglist.benchmark:
+            #     for i, info in enumerate(info_n):
+            #         agent_info[-1][i].append(info_n['n'])
+            #     if train_step > arglist.benchmark_iters and (done or terminal):
+            #         file_name = arglist.benchmark_dir + arglist.exp_name + '.pkl'
+            #         print('Finished benchmarking, now saving...')
+            #         with open(file_name, 'wb') as fp:
+            #             pickle.dump(agent_info[:-1], fp)
+            #         break
+            #     continue
 
             # for displaying learned policies
             if arglist.display:
