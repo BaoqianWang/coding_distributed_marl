@@ -22,8 +22,8 @@ class ReplayBuffer(object):
         self._storage = []
         self._next_idx = 0
 
-    def add(self, obs_t, action, reward, obs_tp1, done):
-        data = (obs_t, action, reward, obs_tp1, done)
+    def add(self, info, obs_t, action, reward, obs_tp1, done, next_info):
+        data = (info, obs_t, action, reward, obs_tp1, done, next_info)
 
         if self._next_idx >= len(self._storage):
             self._storage.append(data)
@@ -32,16 +32,18 @@ class ReplayBuffer(object):
         self._next_idx = (self._next_idx + 1) % self._maxsize
 
     def _encode_sample(self, idxes):
-        obses_t, actions, rewards, obses_tp1, dones = [], [], [], [], []
+        infos, obses_t, actions, rewards, obses_tp1, dones, next_infos = [], [], [], [], [], [], []
         for i in idxes:
             data = self._storage[i]
-            obs_t, action, reward, obs_tp1, done = data
+            info, obs_t, action, reward, obs_tp1, done, next_info = data
+            infos.append(np.array(info, copy=False))
+            next_infos.append(np.array(next_info, copy=False))
             obses_t.append(np.array(obs_t, copy=False))
             actions.append(np.array(action, copy=False))
             rewards.append(reward)
             obses_tp1.append(np.array(obs_tp1, copy=False))
             dones.append(done)
-        return np.array(obses_t), np.array(actions), np.array(rewards), np.array(obses_tp1), np.array(dones)
+        return np.array(infos), np.array(obses_t), np.array(actions), np.array(rewards), np.array(obses_tp1), np.array(dones), np.array(next_infos)
 
     def make_index(self, batch_size):
         return [random.randint(0, len(self._storage) - 1) for _ in range(batch_size)]

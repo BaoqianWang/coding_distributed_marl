@@ -7,6 +7,7 @@ from maddpg.common.distributions import make_pdtype
 from maddpg import AgentTrainer
 from maddpg.trainer.replay_buffer import ReplayBuffer
 import time
+import copy
 
 def discount_with_dones(rewards, dones, gamma):
     discounted = []
@@ -54,7 +55,10 @@ def p_train(make_obs_ph_n, act_space_n, p_index, p_func, q_func, optimizer, grad
 
         #print(act_input_n[p_index])
 
-        q_input = tf.concat(obs_ph_n + act_input_n, 1)
+        q_input = tf.concat([obs_ph_n[p_index]] + act_input_n, 1)
+        #act_ph_n = tf.squeeze(act_ph_n)
+        #q_input = tf.concat([obs_ph_n[p_index], act_ph_n], 1)
+        #q_input = tf.concat([obs_ph_n[q_index], act_ph_n], 1)
         if local_q_func:
             q_input = tf.concat([obs_ph_n[p_index], act_input_n[p_index]], 1)
 
@@ -91,7 +95,9 @@ def q_train(make_obs_ph_n, act_space_n, q_index, q_func, optimizer, grad_norm_cl
         act_ph_n = [act_pdtype_n[i].sample_placeholder([None], name="action"+str(i)) for i in range(len(act_space_n))]
         target_ph = tf.placeholder(tf.float32, [None], name="target")
 
-        q_input = tf.concat(obs_ph_n + act_ph_n, 1)
+        q_input = tf.concat([obs_ph_n[q_index]] + act_ph_n, 1)
+        #act_ph_n = tf.squeeze(act_ph_n)
+        #q_input = tf.concat([obs_ph_n[q_index], act_ph_n], 1)
         if local_q_func:
             q_input = tf.concat([obs_ph_n[q_index], act_ph_n[q_index]], 1)
         q = q_func(q_input, 1, scope="q_func", num_units=num_units)[:,0]
@@ -160,9 +166,9 @@ class MADDPGAgentTrainer(AgentTrainer):
     def action(self, obs):
         return self.act(obs[None])[0]
 
-    def experience(self, obs, act, rew, new_obs, done):
+    def experience(self, info, obs, act, rew, new_obs, done, next_info):
         # Store transition in the replay buffer.
-        self.replay_buffer.add(obs, act, rew, new_obs, float(done))
+        self.replay_buffer.add(info, obs, act, rew, new_obs, float(done), next_info)
 
     def preupdate(self):
         self.replay_sample_index = None
@@ -182,18 +188,56 @@ class MADDPGAgentTrainer(AgentTrainer):
         obs_next_n = []
         act_n = []
         index = self.replay_sample_index
+        info, obs, act, rew, obs_next, done, next_info = self.replay_buffer.sample_index(index)
+        #print('agent_index', self.agent_index, 'agent_neigh', info)
         for i in range(self.n):
-            obs, act, rew, obs_next, done = agents[i].replay_buffer.sample_index(index)
-            obs_n.append(obs)
-            obs_next_n.append(obs_next)
-            act_n.append(act)
-        obs, act, rew, obs_next, done = self.replay_buffer.sample_index(index)
+            if i == self.agent_index:
+                act_n.append(act)
+                obs_n.append(obs)
+                obs_next_n.append(obs_next)
+                continue
+            _, obs_other, act_other, rew_other, obs_next_other, done_other, next_ = agents[i].replay_buffer.sample_index(index)
+            neighbor_act = copy.deepcopy(act)
+            for j in range(self.args.batch_size):
+                #print(info[j])
+                #print(i)
+                if i not in info[j]:
+                    neighbor_act[j,:] = 0
 
+            act_n.append(neighbor_act)
+            obs_n.append(obs_other)
+            obs_next_n.append(obs_next_other)
+
+
+        # for i in range(self.n):
+        #     info, obs, act, rew, obs_next, done, next_info = agents[i].replay_buffer.sample_index(index)
+        #     obs_n.append(obs)
+        #     obs_next_n.append(obs_next)
+        #     act_n.append(act)
+
+        #print(act_n)
+
+
+        #print('action is', agents[0].p_debug['target_act'](obs_next_n[0]))
         # train q network
         num_sample = 1
         target_q = 0.0
+        target_act_next_n = []
+        for i in range(self.n):
+            if i == self.agent_index:
+                target_act_next_n.append(agents[i].p_debug['target_act'](obs_next_n[i]))
+                continue
+            neighbor_target_act = agents[i].p_debug['target_act'](obs_next_n[i])
+            for j in range(self.args.batch_size):
+                if i not in next_info[j]:
+                    neighbor_target_act[j] = [0]*5
+            target_act_next_n.append(neighbor_target_act)
+
+        #print(target_act_next_n)
+
+
         for i in range(num_sample):
-            target_act_next_n = [agents[i].p_debug['target_act'](obs_next_n[i]) for i in range(self.n)]
+            #target_act_next_n = [agents[i].p_debug['target_act'](obs_next_n[i]) for i in range(self.n)]
             target_q_next = self.q_debug['target_q_values'](*(obs_next_n + target_act_next_n))
             target_q += rew + self.args.gamma * (1.0 - done) * target_q_next
         target_q /= num_sample
