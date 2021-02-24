@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
-    parser.add_argument("--max_num_train", type=int, default=1000, help="number of train")
+    parser.add_argument("--max_num_train", type=int, default=5000, help="number of train")
 
     # Core training parameters
     parser.add_argument("--lr", type=float, default=1e-2, help="learning rate for Adam optimizer")
@@ -85,6 +85,7 @@ def interact_with_environments(env, trainers):
     step = 0
     while True:
         #print('observation', obs_n)
+        obs_n, info_n = env.reset()
         action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
         #print(action_n)
         # environment step
@@ -97,11 +98,12 @@ def interact_with_environments(env, trainers):
             agent.experience(info_n[i], obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i], next_info_n[i])
         #print('Observation', obs_n, 'Neighbor information', info_n)
 
+        ### Observation
         obs_n = new_obs_n
         info_n = next_info_n
 
-        for i, rew in enumerate(rew_n):
-            episode_rewards[-1] += rew
+        # for i, rew in enumerate(rew_n):
+        #     episode_rewards[-1] += rew
 
         if done or terminal:
             obs_n, info_n = env.reset()
@@ -154,15 +156,18 @@ def train(arglist):
         print('Starting iterations...')
 
         #Collect enough data for memory
-        interact_with_environments(env, trainers)
-        obs_n, info_n = env.reset()
+        #interact_with_environments(env, trainers)
+        #obs_n, info_n = env.reset()
         t_start = time.time()
+        obs_n, info_n = env.reset()
         while True:
+            #obs_n, info_n = env.reset()
             # get action
             action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
             #print(action_n)
             # environment step
             new_obs_n, rew_n, done_n, next_info_n = env.step(action_n)
+            #print('Next Observation', new_obs_n, 'Observation', obs_n, 'Action', action_n)
             episode_step += 1
             done = all(done_n)
             terminal = (episode_step >= arglist.max_episode_len)
@@ -205,7 +210,7 @@ def train(arglist):
 
             # for displaying learned policies
             if arglist.display:
-                time.sleep(0.1)
+                time.sleep(0.5)
                 env.render()
                 continue
 
@@ -221,7 +226,7 @@ def train(arglist):
 
             # save model, display training output
             if terminal and  len(episode_rewards)%arglist.save_rate==0:
-                #U.save_state(arglist.save_dir, saver=saver)
+                U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
                 t_end = time.time()
                 print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(
