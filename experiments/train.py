@@ -156,7 +156,8 @@ def train(arglist):
         print('Starting iterations...')
 
         #Collect enough data for memory
-        #interact_with_environments(env, trainers)
+        if not arglist.display:
+            interact_with_environments(env, trainers)
         #obs_n, info_n = env.reset()
         t_start = time.time()
         obs_n, info_n = env.reset()
@@ -210,8 +211,11 @@ def train(arglist):
 
             # for displaying learned policies
             if arglist.display:
-                time.sleep(0.5)
+                time.sleep(0.1)
                 env.render()
+                if (len(episode_rewards) > 10):
+                    print('Mean Reward is:', np.mean(episode_rewards))
+                    break
                 continue
 
             # update all trainers, if not in display or benchmark mode
