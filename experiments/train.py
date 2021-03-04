@@ -91,7 +91,7 @@ def train(arglist):
 
         #Collect enough data for memory
         if not arglist.display:
-            interact_with_environments(env, trainers, arglist.max_episode_len * arglist.batch_size)
+            interact_with_environments(env, trainers, 5 * arglist.batch_size)
 
         t_start = time.time()
         k = 1
@@ -137,7 +137,7 @@ def train(arglist):
                 k+=1
                 frames.append(env.render('rgb_array')[0])
                 if (terminal or done):
-                    imageio.mimsave('test%d.gif' %k, frames, duration=0.15)
+                    imageio.mimsave('real_benchmark_neighbor%d.gif' %k, frames, duration=0.15)
                     frames=[]
 
                 if( k>= 200):
@@ -160,7 +160,7 @@ def train(arglist):
                 #print(num_train)
                 U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
-                reward = interact_with_environments(env, trainers, 10*arglist.max_episode_len, False)
+                reward = interact_with_environments(env, trainers, 5*arglist.max_episode_len, False)
                 t_end = time.time()
                 print("steps: {},  mean episode reward: {}, time: {}".format(
                     num_train, reward, round(t_end-t_start, 3)))
@@ -168,8 +168,7 @@ def train(arglist):
                 t_start = time.time()
                 # Keep track of final episode reward
                 final_ep_rewards.append(reward)
-                for rew in agent_rewards:
-                    final_ep_ag_rewards.append(np.mean(rew[-arglist.save_rate:]))
+
 
             # saves final episode reward for plotting training curve later
             if num_train > arglist.max_num_train:
