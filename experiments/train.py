@@ -137,7 +137,7 @@ def train(arglist):
                 k+=1
                 frames.append(env.render('rgb_array')[0])
                 if (terminal or done):
-                    imageio.mimsave('real_benchmark_neighbor%d.gif' %k, frames, duration=0.15)
+                    imageio.mimsave('real_benchmark_neighbor%d_agents%d.gif' %(k,arglist.num_agents), frames, duration=0.15)
                     frames=[]
 
                 if( k>= 200):
