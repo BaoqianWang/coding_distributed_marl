@@ -13,12 +13,14 @@ import imageio
 
 
 
-def interact_with_environments(env, trainers):
+def interact_with_environments(env, trainers, size_transitions, train_data = True):
 
     obs_n = env.reset()
     episode_rewards = [0.0]
     step = 0
+    num_transitions = 0
     while True:
+
         action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
         # environment step
         new_obs_n, rew_n, done_n, info_n = env.step(action_n)
@@ -26,8 +28,9 @@ def interact_with_environments(env, trainers):
         done = all(done_n)
         terminal = (step >= arglist.max_episode_len)
         # collect experience
-        for i, agent in enumerate(trainers):
-            agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+        if (train_data):
+            for i, agent in enumerate(trainers):
+                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
 
         obs_n = new_obs_n
 
@@ -35,12 +38,18 @@ def interact_with_environments(env, trainers):
             episode_rewards[-1] += rew
         if done or terminal:
             obs_n = env.reset()
+            episode_rewards.append(0)
             step = 0
 
-        if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
+        num_transitions += 1
+
+        if num_transitions >= size_transitions:
             break
 
-    return
+        # if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
+        #     break
+
+    return np.mean(episode_rewards)
 
 def train(arglist):
     with U.single_threaded_session():
@@ -82,7 +91,7 @@ def train(arglist):
 
         #Collect enough data for memory
         if not arglist.display:
-            interact_with_environments(env, trainers)
+            interact_with_environments(env, trainers, arglist.max_episode_len * arglist.batch_size)
 
         t_start = time.time()
         k = 1
@@ -115,26 +124,13 @@ def train(arglist):
 
             # increment global step counter
             train_step += 1
+            #print(train_step)
             if (train_step % 100 == 0):
                 if(arglist.num_straggler):
                     time.sleep(1)
                 num_train += 1
 
-            # for benchmarking learned policies
-            if arglist.benchmark:
-                for i, info in enumerate(info_n):
-                    agent_info[-1][i].append(info_n['n'])
-                if train_step > arglist.benchmark_iters and (done or terminal):
-                    file_name = arglist.benchmark_dir + arglist.exp_name + '.pkl'
-                    print('Finished benchmarking, now saving...')
-                    with open(file_name, 'wb') as fp:
-                        pickle.dump(agent_info[:-1], fp)
-                    break
-                continue
-
             # for displaying learned policies
-
-
             if arglist.display:
                 time.sleep(0.1)
                 #env.render()
@@ -160,23 +156,25 @@ def train(arglist):
 
 
             # save model, display training output
-            if terminal and  len(episode_rewards)%arglist.save_rate==0:
+            if (num_train %100 ==0 and train_step %100 ==0):
+                #print(num_train)
                 U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
+                reward = interact_with_environments(env, trainers, 10*arglist.max_episode_len, False)
                 t_end = time.time()
-                print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(
-                    num_train, len(episode_rewards), np.mean(episode_rewards[-arglist.save_rate:]), round(t_end-t_start, 3)))
+                print("steps: {},  mean episode reward: {}, time: {}".format(
+                    num_train, reward, round(t_end-t_start, 3)))
                 train_time.append(round(t_end-t_start, 3))
                 t_start = time.time()
                 # Keep track of final episode reward
-                final_ep_rewards.append(np.mean(episode_rewards[-arglist.save_rate:]))
+                final_ep_rewards.append(reward)
                 for rew in agent_rewards:
                     final_ep_ag_rewards.append(np.mean(rew[-arglist.save_rate:]))
 
             # saves final episode reward for plotting training curve later
             if num_train > arglist.max_num_train:
                 print('The mean time is', np.mean(train_time[1:]), 'The corresponding variance is', np.var(train_time[1:]))
-                rew_file_name = arglist.plots_dir + arglist.scenario + 'centralized_rewards_%d_agents.pkl' %arglist.num_agents
+                rew_file_name = arglist.plots_dir + arglist.scenario + 'neighbor_benchmark_rewards_%d_agents.pkl' %arglist.num_agents
                 with open(rew_file_name, 'wb') as fp:
                     pickle.dump(final_ep_rewards, fp)
                 break
