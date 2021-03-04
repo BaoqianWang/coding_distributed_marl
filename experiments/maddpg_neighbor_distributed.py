@@ -63,10 +63,8 @@ def make_env(scenario_name, arglist, benchmark=False):
     # create world
     world = scenario.make_world(arglist.num_agents)
     # create multiagent environment
-    if benchmark:
-        env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation, scenario.benchmark_data)
-    else:
-        env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation)
+    env = MultiAgentEnv(world, scenario.reset_world, scenario.reward, scenario.observation)
+
     return env
 
 def get_trainers(env, num_agents, name, obs_shape_n, arglist, session):
@@ -81,59 +79,27 @@ def get_trainers(env, num_agents, name, obs_shape_n, arglist, session):
     return trainers
 
 
-def interact_with_environments(env, trainers, steps, first_time = True):
+def interact_with_environments(env, trainers, node_id, steps):
 
-    obs_n = env.reset()
-    if (first_time):
-        episode_rewards = [0.0]
-        step = 0
-        while True:
-            action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
-            # environment step
-            new_obs_n, rew_n, done_n, info_n = env.step(action_n)
-            step += 1
-            done = all(done_n)
-            terminal = (step >= arglist.max_episode_len)
-            # collect experience
-            for i, agent in enumerate(trainers):
-                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
+    for i in range(steps):
+        obs_neighbor = env.reset(node_id) # Only initalize neighbor area of nodei_id-th agent
+        action_n = [[]] * env.n
+        target_action_n = [[]] * env.n
+        for i, obs in enumerate(obs_neighbor):
+            if len(obs) !=0:
+                action_n[i] = trainers[i].action(obs)
 
-            obs_n = new_obs_n
+        new_obs_neighbor, rew, done_n, next_info_n = env.step(action_n) # Interaction within the neighbor area
 
-            for i, rew in enumerate(rew_n):
-                episode_rewards[-1] += rew
+        for j, next_obs in enumerate(new_obs_neighbor):
+            if len(obs) !=0:
+                target_action_n[i] = trainers[i].target_action(obs)
 
-            if done or terminal:
-                obs_n = env.reset()
-                step = 0
-
-            if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
-                break
-    else:
-        episode_rewards = [0.0]
-        step = 0
-        for _ in range(steps):
-            action_n = [agent.action(obs) for agent, obs in zip(trainers, obs_n)]
-            # environment step
-            new_obs_n, rew_n, done_n, info_n = env.step(action_n)
-            step += 1
-            done = all(done_n)
-            terminal = (step >= arglist.max_episode_len)
-            # collect experience
-            for i, agent in enumerate(trainers):
-                agent.experience(obs_n[i], action_n[i], rew_n[i], new_obs_n[i], done_n[i])
-
-            obs_n = new_obs_n
-
-            for i, rew in enumerate(rew_n):
-                episode_rewards[-1] += rew
-
-            if done or terminal:
-                episode_rewards.append(0)
-                obs_n = env.reset()
-                step = 0
-
-
+        info_n = 0.1
+        ## Information needed:
+        # Observation of node_id, actions of nearby agents, Observations of nearby agents at next time steps:
+        trainers[node_id].experience(obs_neighbor[node_id], action_n, new_obs_neighbor[node_id], target_action_n, rew) # Add one step transition to replay memory of node_id -th agent
+        print('observation', obs_neighbor, 'reward', rew, 'action', action_n, 'new_observation', new_obs_neighbor, info_n)
     return episode_rewards
 
 
@@ -160,15 +126,15 @@ if __name__== "__main__":
         node_id = comm.Get_rank()
         node_name = MPI.Get_processor_name()
         CENTRAL_CONTROLLER = 0
-        ACTOR = 1
 
 
         env = make_env(arglist.scenario, arglist, arglist.benchmark)
         num_agents = env.n
         num_learners = num_agents
-        LEARNERS = [i for i in range(2, 2+num_learners)]
+        LEARNERS = [i for i in range(1, 1+num_learners)]
 
-        assert num_node == num_learners + 2
+        assert num_node == num_learners + 1
+
 
         obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
         trainers = get_trainers(env, num_agents, "actor", obs_shape_n, arglist, session)
@@ -180,15 +146,15 @@ if __name__== "__main__":
         train_step=0
         iter_step=0
 
-        if (node_id == ACTOR):
+        if (node_id == CENTRAL_CONTROLLER):
             print('Coded computation scheme: ', 'Uncoded')
             print('Scenario: ', arglist.scenario)
             print('Number of learners: ', num_learners)
             print('Number of agents: ', num_agents)
-            interact_with_environments(env, trainers, steps, True)
+
+            #interact_with_environments(env, trainers, steps, True)
 
         done = 0
-
 
         start = time.time()
         while True:
@@ -208,87 +174,45 @@ if __name__== "__main__":
             end_master_weights=time.time()
 
 
-            if(node_id > CENTRAL_CONTROLLER):
+            if(node_id in LEARNERS):
+                # Receive parameters
                 for i, agent in enumerate(trainers):
                     agent.set_weigths(all_agents_weights[i])
 
 
-            if(node_id == ACTOR):
-                rewards = interact_with_environments(env, trainers, 100, False)
-                rewards.pop()
-                #print('rewards is', rewards)
-                episode_rewards += rewards
+                interact_with_environments(env, trainers, node_id-1, steps)
 
-                #print(num_train)
-                if(len(episode_rewards)%arglist.save_rate==0):
-                    episode_time=time.time()
-                    train_time.append(episode_time-start)
-                    print("steps: {}, episodes: {}, mean episode reward: {}, time: {}".format(num_train, len(episode_rewards), np.mean(episode_rewards[-arglist.save_rate:]),episode_time-start))
-                    final_episode_rewards.append(np.mean(episode_rewards[-arglist.save_rate:]))
-                    start=time.time()
+                # Interact with environment in neighbor area
 
-                #print('Actor collecting number of %d episode' %(len(episode_rewards)), 'with train step', train_step)
-                #if(train_step%100==0 and train_step > arglist.batch_size * arglist.max_episode_len):
-                for l in range(num_learners):
-                    replay_obs_n = []
-                    replay_obs_next_n = []
-                    replay_act_n = []
-                    replay_reward_n = []
-                    replay_done_n = []
-                    episodes = dict()
+                # Build the replay memory for node_id-th agent
 
-                    index = trainers[l].replay_buffer.make_index(arglist.batch_size)
-                    for i in range(num_learners):
-                        obs, act, rew, obs_next, done = trainers[i].replay_buffer.sample_index(index)
-                        replay_obs_n.append(obs)
-                        replay_obs_next_n.append(obs_next)
-                        replay_act_n.append(act)
-                        replay_reward_n.append(rew)
-                        replay_done_n.append(done)
+                #
 
 
-                    episodes['observation']=replay_obs_n
-                    episodes['actions']=replay_act_n
-                    episodes['observation_next']=replay_obs_next_n
-                    episodes['reward']=replay_reward_n
-                    episodes['done']=replay_done_n
-                    comm.send(episodes, dest=2+l, tag=num_train)
-
-
-            if(node_id == ACTOR):
-                num_train += 1
-                #print(num_train)
-                if num_train > arglist.num_train:
-                    print('The mean time is', np.mean(train_time), 'The corresponding variance is', np.var(train_time))
-                    # rew_file_name = arglist.plots_dir + arglist.scenario + 'distributed_rewards.pkl'
-                    # with open(rew_file_name, 'wb') as fp:
-                    #     pickle.dump(final_episode_rewards, fp)
-                    break
-
-
-            if(node_id > ACTOR):
-                loss=None
-                episodes = comm.recv(source=1, tag=num_train)
-                comp_start = time.time()
-                loss=trainers[node_id-2].update(trainers, episodes)
-                comp_end = time.time()
-                weights = trainers[node_id-2].get_weigths()
-
-                if(node_id in STRAGGLER):
-                    time.sleep(0.25)
-
-                start_worker_weights=time.time()
-                comm.send(weights, dest=0,tag=num_train)
-                end_worker_weights=time.time()
+                # Update parameters
+                # loss=None
+                # comp_start = time.time()
+                # loss=trainers[node_id-1].update(trainers, episodes)
+                # comp_end = time.time()
+                #
+                # # Send parameters to central controller
+                # weights = trainers[node_id-1].get_weigths()
+                #
+                # if(node_id in STRAGGLER):
+                #     time.sleep(0.25)
+                #
+                # start_worker_weights=time.time()
+                # comm.send(weights, dest=0,tag=num_train)
+                # end_worker_weights=time.time()
 
                 num_train+=1
                 if num_train > arglist.num_train:
                     break
 
-
+            # Central controller receives weights from learners
             if(node_id == CENTRAL_CONTROLLER):
                 for i in range(num_learners):
-                     agent_weight = comm.recv(source=i+2, tag=num_train)
+                     agent_weight = comm.recv(source=i+1, tag=num_train)
                      trainers[i].set_weigths(agent_weight)
 
                 num_train += 1
