@@ -6,7 +6,8 @@ import maddpg.common.tf_util as U
 from maddpg.common.distributions import make_pdtype
 from maddpg import AgentTrainer
 from maddpg.trainer.replay_buffer import ReplayBuffer
-
+import time
+import copy
 
 def discount_with_dones(rewards, dones, gamma):
     discounted = []
@@ -36,20 +37,32 @@ def p_train(make_obs_ph_n, act_space_n, p_index, p_func, q_func, optimizer, grad
 
         p_input = obs_ph_n[p_index]
 
+        #print(int(act_pdtype_n[p_index].param_shape()[0]))
+
         p = p_func(p_input, int(act_pdtype_n[p_index].param_shape()[0]), scope="p_func", num_units=num_units)
         p_func_vars = U.scope_vars(U.absolute_scope_name("p_func"))
 
         # wrap parameters in distribution
         act_pd = act_pdtype_n[p_index].pdfromflat(p)
 
+        # print(act_pd)
         act_sample = act_pd.sample()
+        # print(act_sample)
         p_reg = tf.reduce_mean(tf.square(act_pd.flatparam()))
 
         act_input_n = act_ph_n + []
         act_input_n[p_index] = act_pd.sample()
-        q_input = tf.concat(obs_ph_n + act_input_n, 1)
+
+        #print(act_input_n[p_index])
+
+        q_input = tf.concat([obs_ph_n[p_index]] + act_input_n, 1)
+        #act_ph_n = tf.squeeze(act_ph_n)
+        #q_input = tf.concat([obs_ph_n[p_index], act_ph_n], 1)
+        #q_input = tf.concat([obs_ph_n[q_index], act_ph_n], 1)
         if local_q_func:
             q_input = tf.concat([obs_ph_n[p_index], act_input_n[p_index]], 1)
+
+        # Reuse parameter is true which indicates it uses the existing q function
         q = q_func(q_input, 1, scope="q_func", reuse=True, num_units=num_units)[:,0]
         pg_loss = -tf.reduce_mean(q)
 
@@ -82,7 +95,9 @@ def q_train(make_obs_ph_n, act_space_n, q_index, q_func, optimizer, grad_norm_cl
         act_ph_n = [act_pdtype_n[i].sample_placeholder([None], name="action"+str(i)) for i in range(len(act_space_n))]
         target_ph = tf.placeholder(tf.float32, [None], name="target")
 
-        q_input = tf.concat(obs_ph_n + act_ph_n, 1)
+        q_input = tf.concat([obs_ph_n[q_index]] + act_ph_n, 1)
+        #act_ph_n = tf.squeeze(act_ph_n)
+        #q_input = tf.concat([obs_ph_n[q_index], act_ph_n], 1)
         if local_q_func:
             q_input = tf.concat([obs_ph_n[q_index], act_ph_n[q_index]], 1)
         q = q_func(q_input, 1, scope="q_func", num_units=num_units)[:,0]
@@ -110,8 +125,7 @@ def q_train(make_obs_ph_n, act_space_n, q_index, q_func, optimizer, grad_norm_cl
         return train, update_target_q, {'q_values': q_values, 'target_q_values': target_q_values}
 
 class MADDPGAgentTrainer(AgentTrainer):
-    def __init__(self, name, model, obs_shape_n, session, act_space_n, agent_index, args, local_q_func=False):
-        self.session=session
+    def __init__(self, name, model, obs_shape_n, act_space_n, agent_index, args, local_q_func=False):
         self.name = name
         self.n = len(obs_shape_n)
         self.agent_index = agent_index
@@ -148,82 +162,94 @@ class MADDPGAgentTrainer(AgentTrainer):
         self.replay_buffer = ReplayBuffer(1e6)
         self.max_replay_buffer_len = args.batch_size * args.max_episode_len
         self.replay_sample_index = None
-        self.get_p_q_variables()
 
     def action(self, obs):
-
         return self.act(obs[None])[0]
 
-    def target_action(self, obs):
-
-        return self.p_debug['target_act'](obs[None])[0]
-
-    def get_p_q_variables(self,reuse=True):
-        with tf.variable_scope(self.name, reuse=reuse):
-            self.p_variables=U.scope_vars(U.absolute_scope_name("p_func"))
-            self.target_p_variables=U.scope_vars(U.absolute_scope_name("target_p_func"))
-            self.q_variables=U.scope_vars(U.absolute_scope_name("q_func"))
-            self.target_q_variables=U.scope_vars(U.absolute_scope_name("target_q_func"))
-
-    def get_weigths(self):
-        weigths_dict=dict()
-        weigths_dict['p_variables']=self.session.run(self.p_variables)
-        weigths_dict['target_p_variables']=self.session.run(self.target_p_variables)
-        weigths_dict['q_variables']=self.session.run(self.q_variables)
-        weigths_dict['target_q_variables']=self.session.run(self.target_q_variables)
-        return weigths_dict
-
-
-    def set_weigths(self, weight_dict):
-        for i, weight in enumerate(weight_dict['p_variables']):
-            tf.keras.backend.set_value(self.p_variables[i], weight)
-
-        for i, weight in enumerate(weight_dict['target_p_variables']):
-            tf.keras.backend.set_value(self.target_p_variables[i], weight)
-
-        for i, weight in enumerate(weight_dict['q_variables']):
-            tf.keras.backend.set_value(self.q_variables[i], weight)
-
-        for i, weight in enumerate(weight_dict['target_q_variables']):
-            tf.keras.backend.set_value(self.target_q_variables[i], weight)
-
-
-
-    def experience(self, obs, action_n, new_obs, target_action_n, rew):
+    def experience(self, info, obs, act, rew, new_obs, done, next_info):
         # Store transition in the replay buffer.
-        self.replay_buffer.add(obs, action_n, new_obs, target_action_n, rew)
-
-
+        self.replay_buffer.add(info, obs, act, rew, new_obs, float(done), next_info)
 
     def preupdate(self):
         self.replay_sample_index = None
 
-
-
-    def update(self, agents, episodes):
+    def update(self, agents, t):
+        #print('start updating')
+        # if len(self.replay_buffer) < self.max_replay_buffer_len: # replay buffer is not large enough
+        #     #print("not large enough")
+        #     return
+        if not t % 100 == 0:  # only update every 100 steps
+            return
 
         learning_start_time = time.time()
         self.replay_sample_index = self.replay_buffer.make_index(self.args.batch_size)
         # collect replay sample from all agents
-
+        obs_n = []
+        obs_next_n = []
+        act_n = []
         index = self.replay_sample_index
-        obss, act_ns, next_obss, target_action_ns, rews = self.replay_buffer.sample_index(index)
+        info, obs, act, rew, obs_next, done, next_info = self.replay_buffer.sample_index(index)
+        #print('agent_index', self.agent_index, 'agent_neigh', info)
+        for i in range(self.n):
+            if i == self.agent_index:
+                act_n.append(act)
+                obs_n.append(obs)
+                obs_next_n.append(obs_next)
+                continue
+            _, obs_other, act_other, rew_other, obs_next_other, done_other, next_ = agents[i].replay_buffer.sample_index(index)
+            neighbor_act = copy.deepcopy(act)
+            for j in range(self.args.batch_size):
+                #print(info[j])
+                #print(i)
+                if i not in info[j]:
+                    neighbor_act[j,:] = 0
 
+            act_n.append(neighbor_act)
+            obs_n.append(obs_other)
+            obs_next_n.append(obs_next_other)
+
+
+        # for i in range(self.n):
+        #     info, obs, act, rew, obs_next, done, next_info = agents[i].replay_buffer.sample_index(index)
+        #     obs_n.append(obs)
+        #     obs_next_n.append(obs_next)
+        #     act_n.append(act)
+
+        #print(act_n)
+
+
+        #print('action is', agents[0].p_debug['target_act'](obs_next_n[0]))
+        # train q network
+        num_sample = 1
+        target_q = 0.0
+        target_act_next_n = []
+        for i in range(self.n):
+            if i == self.agent_index:
+                target_act_next_n.append(agents[i].p_debug['target_act'](obs_next_n[i]))
+                continue
+            neighbor_target_act = agents[i].p_debug['target_act'](obs_next_n[i])
+            for j in range(self.args.batch_size):
+                if i not in next_info[j]:
+                    neighbor_target_act[j] = [0]*5
+            target_act_next_n.append(neighbor_target_act)
+
+        #print(target_act_next_n)
 
 
         for i in range(num_sample):
             #target_act_next_n = [agents[i].p_debug['target_act'](obs_next_n[i]) for i in range(self.n)]
-            target_q_next = self.q_debug['target_q_values'](*(next_obss + target_action_ns))
-            target_q += rews + self.args.gamma * (1.0 - done) * target_q_next
-
-        q_loss = self.q_train(*(obss + act_ns + [target_q]))
+            target_q_next = self.q_debug['target_q_values'](*(obs_next_n + target_act_next_n))
+            target_q += rew + self.args.gamma * (1.0 - done) * target_q_next
+        target_q /= num_sample
+        q_loss = self.q_train(*(obs_n + act_n + [target_q]))
 
         # train p network
-        p_loss = self.p_train(*(obss + act_ns))
+        p_loss = self.p_train(*(obs_n + act_n))
 
         self.p_update()
         self.q_update()
         learning_end_time = time.time()
 
+        #print(learning_end_time - learning_start_time)
 
         return [q_loss, p_loss, np.mean(target_q), np.mean(rew), np.mean(target_q_next), np.std(target_q)]

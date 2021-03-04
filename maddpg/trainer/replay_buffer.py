@@ -22,8 +22,8 @@ class ReplayBuffer(object):
         self._storage = []
         self._next_idx = 0
 
-    def add(self, info, obs_t, action, reward, obs_tp1, done, next_info):
-        data = (info, obs_t, action, reward, obs_tp1, done, next_info)
+    def add(self, obs, action_n, new_obs, target_action_n, rew):
+        data = (obs, action_n, new_obs, target_action_n, rew)
 
         if self._next_idx >= len(self._storage):
             self._storage.append(data)
@@ -32,18 +32,17 @@ class ReplayBuffer(object):
         self._next_idx = (self._next_idx + 1) % self._maxsize
 
     def _encode_sample(self, idxes):
-        infos, obses_t, actions, rewards, obses_tp1, dones, next_infos = [], [], [], [], [], [], []
+        obss, action_ns, new_obss, target_action_ns, rews = [], [], [], [], [], [], []
         for i in idxes:
             data = self._storage[i]
-            info, obs_t, action, reward, obs_tp1, done, next_info = data
-            infos.append(np.array(info, copy=False))
-            next_infos.append(np.array(next_info, copy=False))
-            obses_t.append(np.array(obs_t, copy=False))
-            actions.append(np.array(action, copy=False))
-            rewards.append(reward)
-            obses_tp1.append(np.array(obs_tp1, copy=False))
-            dones.append(done)
-        return np.array(infos), np.array(obses_t), np.array(actions), np.array(rewards), np.array(obses_tp1), np.array(dones), np.array(next_infos)
+            obs, action_n, new_obs, target_action_n, rew = data
+            obss.append(np.array(obs, copy=False))
+            action_ns.append(np.array(action_n, copy=False))
+            new_obss.append(np.array(new_obs, copy=False))
+            target_action_ns.append(np.array(target_action_n, copy=False))
+            rews.append(rew)
+
+        return np.array(obss), np.array(action_ns), np.array(new_obss), np.array(target_action_ns),  np.array(rews)
 
     def make_index(self, batch_size):
         return [random.randint(0, len(self._storage) - 1) for _ in range(batch_size)]
