@@ -200,21 +200,20 @@ class MADDPGAgentTrainer(AgentTrainer):
 
 
 
-    def update(self, agents, episodes):
+    def update(self, agents):
 
-        learning_start_time = time.time()
+        #learning_start_time = time.time()
         self.replay_sample_index = self.replay_buffer.make_index(self.args.batch_size)
         # collect replay sample from all agents
 
         index = self.replay_sample_index
         obss, act_ns, next_obss, target_action_ns, rews = self.replay_buffer.sample_index(index)
 
-
-
-        for i in range(num_sample):
-            #target_act_next_n = [agents[i].p_debug['target_act'](obs_next_n[i]) for i in range(self.n)]
-            target_q_next = self.q_debug['target_q_values'](*(next_obss + target_action_ns))
-            target_q += rews + self.args.gamma * (1.0 - done) * target_q_next
+        print(target_action_ns)
+        # Pay attention to done !!!!!!!!!!!!!!!
+        #target_act_next_n = [agents[i].p_debug['target_act'](obs_next_n[i]) for i in range(self.n)]
+        target_q_next = self.q_debug['target_q_values'](*(next_obss + target_action_ns))
+        target_q += rews + self.args.gamma * target_q_next
 
         q_loss = self.q_train(*(obss + act_ns + [target_q]))
 
@@ -223,7 +222,7 @@ class MADDPGAgentTrainer(AgentTrainer):
 
         self.p_update()
         self.q_update()
-        learning_end_time = time.time()
+        #learning_end_time = time.time()
 
 
         return [q_loss, p_loss, np.mean(target_q), np.mean(rew), np.mean(target_q_next), np.std(target_q)]

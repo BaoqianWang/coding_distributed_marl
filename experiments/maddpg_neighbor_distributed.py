@@ -83,8 +83,8 @@ def interact_with_environments(env, trainers, node_id, steps):
 
     for i in range(steps):
         obs_neighbor = env.reset(node_id) # Only initalize neighbor area of nodei_id-th agent
-        action_n = [[]] * env.n
-        target_action_n = [[]] * env.n
+        action_n = [np.array([0,0,0,0,0])] * env.n
+        target_action_n = [np.array([0,0,0,0,0])] * env.n
         for i, obs in enumerate(obs_neighbor):
             if len(obs) !=0:
                 action_n[i] = trainers[i].action(obs)
@@ -92,8 +92,8 @@ def interact_with_environments(env, trainers, node_id, steps):
         new_obs_neighbor, rew, done_n, next_info_n = env.step(action_n) # Interaction within the neighbor area
 
         for j, next_obs in enumerate(new_obs_neighbor):
-            if len(obs) !=0:
-                target_action_n[i] = trainers[i].target_action(obs)
+            if len(next_obs) !=0:
+                target_action_n[i] = trainers[i].target_action(next_obs)
 
         info_n = 0.1
         ## Information needed:
@@ -182,6 +182,7 @@ if __name__== "__main__":
 
                 interact_with_environments(env, trainers, node_id-1, steps)
 
+                loss=trainers[node_id-1].update(trainers)
                 # Interact with environment in neighbor area
 
                 # Build the replay memory for node_id-th agent

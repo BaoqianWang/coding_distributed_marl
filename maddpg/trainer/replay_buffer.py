@@ -32,7 +32,7 @@ class ReplayBuffer(object):
         self._next_idx = (self._next_idx + 1) % self._maxsize
 
     def _encode_sample(self, idxes):
-        obss, action_ns, new_obss, target_action_ns, rews = [], [], [], [], [], [], []
+        obss, action_ns, new_obss, target_action_ns, rews = [], [], [], [], []
         for i in idxes:
             data = self._storage[i]
             obs, action_n, new_obs, target_action_n, rew = data
