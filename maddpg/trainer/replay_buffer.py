@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 class ReplayBuffer(object):
-    def __init__(self, size):
+    def __init__(self, size, num_agents):
         """Create Prioritized Replay buffer.
 
         Parameters
@@ -14,6 +14,7 @@ class ReplayBuffer(object):
         self._storage = []
         self._maxsize = int(size)
         self._next_idx = 0
+        self.num_agents = num_agents
 
     def __len__(self):
         return len(self._storage)
@@ -33,16 +34,31 @@ class ReplayBuffer(object):
 
     def _encode_sample(self, idxes):
         obss, action_ns, new_obss, target_action_ns, rews = [], [], [], [], []
+        target_action_ns = [[] for i in range(self.num_agents)]
+        action_ns = [[] for i in range(self.num_agents)]
+
         for i in idxes:
             data = self._storage[i]
             obs, action_n, new_obs, target_action_n, rew = data
+            for j in range(self.num_agents):
+                target_action_ns[j].append(target_action_n[j].tolist())
+                action_ns[j].append(action_n[j].tolist())
+                #print('single_data',j, target_action_n[j].tolist())
+
             obss.append(np.array(obs, copy=False))
-            action_ns.append(np.array(action_n, copy=False))
+            #action_ns.append(np.array(action_n, copy=False))
             new_obss.append(np.array(new_obs, copy=False))
-            target_action_ns.append(np.array(target_action_n, copy=False))
             rews.append(rew)
 
-        return np.array(obss), np.array(action_ns), np.array(new_obss), np.array(target_action_ns),  np.array(rews)
+        #print(target_action_ns)
+        # print(target_action_ns)
+        # print(len(target_action_ns[0]))
+        target_action_array = [np.array(value) for value in target_action_ns]
+        action_array = [np.array(value) for value in action_ns]
+        # print('Shape is', target_action_array[0].shape)
+        # print(len(idxes))
+
+        return np.array(obss), action_array, np.array(new_obss), target_action_array,  np.array(rews)
 
     def make_index(self, batch_size):
         return [random.randint(0, len(self._storage) - 1) for _ in range(batch_size)]

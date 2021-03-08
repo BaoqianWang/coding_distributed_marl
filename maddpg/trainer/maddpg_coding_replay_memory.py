@@ -47,9 +47,10 @@ def p_train(make_obs_ph_n, act_space_n, p_index, p_func, q_func, optimizer, grad
 
         act_input_n = act_ph_n + []
         act_input_n[p_index] = act_pd.sample()
-        q_input = tf.concat(obs_ph_n + act_input_n, 1)
-        if local_q_func:
-            q_input = tf.concat([obs_ph_n[p_index], act_input_n[p_index]], 1)
+        q_input = tf.concat([obs_ph_n[p_index]] + act_input_n, 1)
+        # if local_q_func:
+        #     q_input = tf.concat([obs_ph_n[p_index]] + act_input_n, 1)
+
         q = q_func(q_input, 1, scope="q_func", reuse=True, num_units=num_units)[:,0]
         pg_loss = -tf.reduce_mean(q)
 
@@ -82,7 +83,7 @@ def q_train(make_obs_ph_n, act_space_n, q_index, q_func, optimizer, grad_norm_cl
         act_ph_n = [act_pdtype_n[i].sample_placeholder([None], name="action"+str(i)) for i in range(len(act_space_n))]
         target_ph = tf.placeholder(tf.float32, [None], name="target")
 
-        q_input = tf.concat(obs_ph_n + act_ph_n, 1)
+        q_input = tf.concat([obs_ph_n[q_index]] + act_ph_n, 1)
         if local_q_func:
             q_input = tf.concat([obs_ph_n[q_index], act_ph_n[q_index]], 1)
         q = q_func(q_input, 1, scope="q_func", num_units=num_units)[:,0]
@@ -145,7 +146,7 @@ class MADDPGAgentTrainer(AgentTrainer):
             num_units=args.num_units
         )
         # Create experience buffer
-        self.replay_buffer = ReplayBuffer(1e6)
+        self.replay_buffer = ReplayBuffer(1e6, self.n)
         self.max_replay_buffer_len = args.batch_size * args.max_episode_len
         self.replay_sample_index = None
         self.get_p_q_variables()
@@ -203,26 +204,30 @@ class MADDPGAgentTrainer(AgentTrainer):
     def update(self, agents):
 
         #learning_start_time = time.time()
-        self.replay_sample_index = self.replay_buffer.make_index(self.args.batch_size)
+        self.replay_sample_index = self.replay_buffer.make_index(1024)
         # collect replay sample from all agents
-
+        target_q = 0.0
         index = self.replay_sample_index
         obss, act_ns, next_obss, target_action_ns, rews = self.replay_buffer.sample_index(index)
-
-        print(target_action_ns)
+        concat_next_obss = []
+        concat_obss = []
+        for i in range(self.n):
+            concat_next_obss.append(next_obss)
+            concat_obss.append(obss)
+        #print(target_action_ns)
         # Pay attention to done !!!!!!!!!!!!!!!
         #target_act_next_n = [agents[i].p_debug['target_act'](obs_next_n[i]) for i in range(self.n)]
-        target_q_next = self.q_debug['target_q_values'](*(next_obss + target_action_ns))
+        target_q_next = self.q_debug['target_q_values'](*(concat_next_obss + target_action_ns))
         target_q += rews + self.args.gamma * target_q_next
 
-        q_loss = self.q_train(*(obss + act_ns + [target_q]))
+        q_loss = self.q_train(*(concat_obss + act_ns + [target_q]))
 
         # train p network
-        p_loss = self.p_train(*(obss + act_ns))
+        p_loss = self.p_train(*(concat_obss + act_ns))
 
         self.p_update()
         self.q_update()
         #learning_end_time = time.time()
 
 
-        return [q_loss, p_loss, np.mean(target_q), np.mean(rew), np.mean(target_q_next), np.std(target_q)]
+        return [q_loss, p_loss, np.mean(target_q), np.mean(rews), np.mean(target_q_next), np.std(target_q)]
