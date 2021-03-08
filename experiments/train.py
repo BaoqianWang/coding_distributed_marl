@@ -91,7 +91,10 @@ def train(arglist):
 
         #Collect enough data for memory
         if not arglist.display:
+            env_time1 = time.time()
             interact_with_environments(env, trainers, 5 * arglist.batch_size)
+            env_time2 = time.time()
+            print('Environment interactation time: ', env_time2 - env_time1)
 
         t_start = time.time()
         k = 1
@@ -160,7 +163,7 @@ def train(arglist):
                 #print(num_train)
                 U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
-                reward = interact_with_environments(env, trainers, 5*arglist.max_episode_len, False)
+                reward = interact_with_environments(env, trainers, 3*arglist.max_episode_len, False)
                 t_end = time.time()
                 print("steps: {},  mean episode reward: {}, time: {}".format(
                     num_train, reward, round(t_end-t_start, 3)))
