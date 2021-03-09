@@ -225,7 +225,7 @@ if __name__== "__main__":
                 start_master_weights=time.time()
                 all_agents_weights=comm.bcast(all_agents_weights,root=0)
                 end_master_weights=time.time()
-
+                print('communication time', end_master_weights - start_master_weights)
 
                 if(node_id in LEARNERS):
                     # Receive parameters
@@ -233,7 +233,10 @@ if __name__== "__main__":
                         agent.set_weigths(all_agents_weights[i])
 
                     if (num_train == 0):
+                        env_time1 = time.time()
                         interact_with_environments(env, trainers, node_id-1, 5*arglist.batch_size)
+                        env_time2 = time.time()
+                        print('Env interaction time', env_time2 - env_time1)
                     else:
                         interact_with_environments(env, trainers, node_id-1, 4*steps)
 
@@ -248,10 +251,13 @@ if __name__== "__main__":
 
                 # Central controller receives weights from learners
                 if(node_id == CENTRAL_CONTROLLER):
+                    recv_time1 = time.time()
                     for i in range(num_learners):
                          agent_weight = comm.recv(source=i+1, tag=num_train)
                          trainers[i].set_weigths(agent_weight)
-
+                    recv_time2 = time.time()
+                    print('Recv time', recv_time2 - recv_time1)
+                    
                     num_train += 1
                     #print('Num of iteration', num_train)
                     if(num_train % 100 == 0):
