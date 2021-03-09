@@ -4,7 +4,7 @@ SchemeArray=()
 host_name=""
 k=0
 l=0
-max_straggler=0
+
 
 while read LINE
 do
@@ -22,12 +22,8 @@ done
 
 
 #Start Different Computation Schemes
-for((j=0;j<=max_straggler;j=j+1))
-do
 
-  sleep 1
-  echo "start multiple scheme ..."
-  mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
-  python3 ../experiments/maddpg_coding_replay_memory_train.py --scenario simple_spread >> log_distributed_15
-
-done
+sleep 1
+echo "start multiple scheme ..."
+mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
+python3 ../experiments/maddpg_neighbor_distributed.py --scenario simple_spread --num_agents 3
