@@ -99,6 +99,7 @@ def train(arglist):
         t_start = time.time()
         k = 1
         frames = []
+        computation_time = []
         while True:
             # get action
             action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
@@ -153,20 +154,25 @@ def train(arglist):
             for agent in trainers:
                 agent.preupdate()
 
+            comp_time1 = time.time()
             for agent in trainers:
                 loss = agent.update(trainers, train_step)
-
+            comp_time2 = time.time()
+            #print('Computation time:', comp_time2 - comp_time1)
+            computation_time.append(comp_time2 - comp_time1)
 
 
             # save model, display training output
             if (num_train %100 ==0 and train_step %100 ==0):
                 #print(num_train)
-                U.save_state(arglist.save_dir, saver=saver)
+                #U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
                 reward = interact_with_environments(env, trainers, 3*arglist.max_episode_len, False)
                 t_end = time.time()
                 print("steps: {},  mean episode reward: {}, time: {}".format(
                     num_train, reward, round(t_end-t_start, 3)))
+                print('Computation time:', np.max(computation_time))
+                computation_time = []
                 train_time.append(round(t_end-t_start, 3))
                 t_start = time.time()
                 # Keep track of final episode reward
