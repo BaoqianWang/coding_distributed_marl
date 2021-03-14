@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument("--adv-policy", type=str, default="ddpg", help="policy of adversaries")
 
 
-    parser.add_argument("--max_num_train", type=int, default=1000, help="number of train")
+    parser.add_argument("--max_num_train", type=int, default=3000, help="number of train")
     parser.add_argument("--num_train", type=int, default=4000, help="number of train")
 
     # Core training parameters

@@ -165,7 +165,7 @@ def train(arglist):
             # save model, display training output
             if (num_train %100 ==0 and train_step %100 ==0):
                 #print(num_train)
-                #U.save_state(arglist.save_dir, saver=saver)
+                U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
                 reward = interact_with_environments(env, trainers, 3*arglist.max_episode_len, False)
                 t_end = time.time()

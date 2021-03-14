@@ -102,7 +102,7 @@ import matplotlib.pyplot as plt
 # plt.ylabel('Reward')
 # plt.show()
 
-with open('./simple_spreadneighbor_benchmark_rewards_8_agents.pkl','rb') as f:
+with open('./simple_spreadneighbor_benchmark_rewards_3_agents.pkl','rb') as f:
     data1=pickle.load(f)
 
 # with open('./simple_spreadneighbor_rewards_3_agents_1000.pkl','rb') as f:
@@ -117,8 +117,8 @@ plt.legend(fontsize=18)
 plt.xticks(fontsize=18 )
 plt.yticks(fontsize=18)
 plt.grid()
-#plt.show()
-plt.savefig('benchmark_neighbor_8.png', transparent = True)
+plt.show()
+#plt.savefig('benchmark_neighbor_8.png', transparent = True)
 
 
 #print(data)
