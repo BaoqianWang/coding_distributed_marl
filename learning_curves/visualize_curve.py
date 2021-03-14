@@ -102,9 +102,14 @@ import matplotlib.pyplot as plt
 # plt.ylabel('Reward')
 # plt.show()
 
-with open('./simple_spreadneighbor_benchmark_rewards_3_agents.pkl','rb') as f:
+with open('./simple_spreadneighbor_benchmark_rewards_8_agents.pkl','rb') as f:
     data1=pickle.load(f)
-
+# with open('./simple_spreadneighbor_benchmark_rewards_3_agents_1.pkl','rb') as f:
+#     data1+=pickle.load(f)
+# with open('./simple_spreadneighbor_benchmark_rewards_3_agents_2.pkl','rb') as f:
+#     data1+=pickle.load(f)
+# with open('./simple_spreadneighbor_benchmark_rewards_3_agents_3.pkl','rb') as f:
+#     data1+=pickle.load(f)
 # with open('./simple_spreadneighbor_rewards_3_agents_1000.pkl','rb') as f:
 #     data2=pickle.load(f)
 
