@@ -167,7 +167,7 @@ def train(arglist):
                 #print(num_train)
                 U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
-                reward = interact_with_environments(env, trainers, 3*arglist.max_episode_len, False)
+                reward = interact_with_environments(env, trainers, 10*arglist.max_episode_len, False)
                 t_end = time.time()
                 print("steps: {},  mean episode reward: {}, time: {}".format(
                     num_train, reward, round(t_end-t_start, 3)))
