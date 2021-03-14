@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument("--max-episode-len", type=int, default=25, help="maximum episode length")
     parser.add_argument("--num-episodes", type=int, default=20000, help="number of episodes")
     parser.add_argument("--train-period", type=int, default=1000, help="frequency of updating parameters")
-    parser.add_argument("--num_train", type=int, default=1000, help="number of train")
+    parser.add_argument("--num_train", type=int, default=100, help="number of train")
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
@@ -85,7 +85,6 @@ def evaluate_policy(evaluate_env, trainers, display = False):
 
     episode_rewards = [0.0]
     step = 0
-    num_evaluation = 3
     num_transitions = 0
     frames = []
     obs_n, info_n = evaluate_env.reset()
@@ -116,7 +115,7 @@ def evaluate_policy(evaluate_env, trainers, display = False):
             obs_n, info_n = evaluate_env.reset()
             step = 0
 
-        if num_transitions >= 3*arglist.max_episode_len :
+        if num_transitions >= 10*arglist.max_episode_len :
             break
 
     return np.mean(episode_rewards)
@@ -260,16 +259,16 @@ if __name__== "__main__":
 
                     num_train += 1
                     #print('Num of iteration', num_train)
-                    if(num_train % 100 == 0):
+                    if(num_train % 20 == 0):
                         end_train_time = time.time()
-                        #U.save_state(arglist.save_dir, saver=saver)
+                        U.save_state(arglist.save_dir, saver=saver)
                         rew_evaluate = evaluate_policy(evaluate_env, trainers)
                         final_rewards.append(rew_evaluate)
                         print('Num of training iteration:', num_train, 'Reward:', rew_evaluate, 'Training time:', end_train_time - start_time)
                         start_time = time.time()
 
                     if num_train > arglist.num_train:
-                        rew_file_name = arglist.plots_dir + arglist.scenario + '_num_agents_%d.pkl' %arglist.num_agents
+                        rew_file_name = arglist.plots_dir + arglist.scenario + 'neighbor_distributed_num_agents_%d.pkl' %arglist.num_agents
                         with open(rew_file_name, 'wb') as fp:
                             pickle.dump(final_rewards, fp)
                         break
