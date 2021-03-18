@@ -1,10 +1,2 @@
 nodeIPaddress
-run_uncoded_coded_schemes.sh
-run_uncoded_to_get_reward.sh
-numAgents
-numLearners
-scenarioName
-vanLDPC_gamma
-vanLDPC_p
-vanLDPC_pho
-computationScheme
+run_coded_schemes.sh

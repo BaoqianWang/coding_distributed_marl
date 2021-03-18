@@ -1,4 +1,2 @@
-../experiments/maddpg_uncoded.py
 ../experiments/train.py
-../experiments/maddpg_coded_scheme.py
 ../experiments/common_configuration.py
