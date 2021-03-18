@@ -33,12 +33,19 @@ done < $filename1
 
 
 
-# # Transfer environments file
-# for ((i=1;i<=num_nodes;i++))
-# do
-#     scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  /home/smile/multiagent-particle-envs/multiagent/scenarios/simple_spread.py ubuntu@${ARRAY[i]}:~/multi-envs/multiagent/scenarios/
-#     echo "Transfer $i to $line Done "
-# done
+# Transfer environments file
+for ((i=1;i<=num_nodes;i++))
+do
+    scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  /home/smile/multiagent-particle-envs/multiagent/scenarios/simple_spread.py ubuntu@${ARRAY[i]}:~/multi-envs/multiagent/scenarios/
+    echo "Transfer $i to $line Done "
+    scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  /home/smile/multiagent-particle-envs/multiagent/environment.py ubuntu@${ARRAY[i]}:~/multi-envs/multiagent/
+    echo "Transfer $i to $line Done "
+    scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  /home/smile/multiagent-particle-envs/multiagent/environment_neighbor_evaluate.py ubuntu@${ARRAY[i]}:~/multi-envs/multiagent/
+    echo "Transfer $i to $line Done "
+    scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem  /home/smile/multiagent-particle-envs/multiagent/scenarios/simple_spread_neighbor_evaluate.py ubuntu@${ARRAY[i]}:~/multi-envs/multiagent/scenarios/
+    echo "Transfer $i to $line Done "
+
+done
 
 
 

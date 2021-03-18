@@ -261,7 +261,7 @@ if __name__== "__main__":
                     #print('Num of iteration', num_train)
                     if(num_train % 20 == 0):
                         end_train_time = time.time()
-                        U.save_state(arglist.save_dir, saver=saver)
+                        #U.save_state(arglist.save_dir, saver=saver)
                         rew_evaluate = evaluate_policy(evaluate_env, trainers)
                         final_rewards.append(rew_evaluate)
                         print('Num of training iteration:', num_train, 'Reward:', rew_evaluate, 'Training time:', end_train_time - start_time)
