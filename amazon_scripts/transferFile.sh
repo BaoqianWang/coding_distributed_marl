@@ -6,7 +6,7 @@ filename='nodeIPaddress'
 while read line; do
 echo $line
 
-scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem $1 ubuntu@$line:~/maddpg/experiments/
+scp -i ~/AmazonEC2/.ssh/linux_key_pari.pem $1 ubuntu@$line:~/maddpg/amazon_scripts/
 
 echo "Transfer $1 to $line Done !"
 done < $filename
