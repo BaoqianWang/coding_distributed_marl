@@ -1,7 +1,7 @@
 import pickle
 import matplotlib.pyplot as plt
 
-with open('../learning_curves/maddpg_rewards.pkl','rb') as f:
+with open('../learning_curves/simple_spreadneighbor_distributed_num_agents_3.pkl','rb') as f:
     data=pickle.load(f)
 
 plt.figure()
