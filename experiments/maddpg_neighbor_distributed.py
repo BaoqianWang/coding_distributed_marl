@@ -134,8 +134,8 @@ def interact_with_environments(env, trainers, node_id, steps):
                 action_n[i] = trainers[i].action(obs)
 
         new_obs_neighbor, rew, done_n, next_info_n = env.step(action_n) # Interaction within the neighbor area
-        print('Step:', i)
-        print('Node id', node_id, 'Observation:', obs_neighbor[node_id][4:8], 'New Observation:', new_obs_neighbor[node_id][4:8])
+        #print('Step:', i)
+        #print('Node id', node_id, 'Observation:', obs_neighbor[node_id][4:8], 'New Observation:', new_obs_neighbor[node_id][4:8])
         for j, next_obs in enumerate(new_obs_neighbor):
             if len(next_obs) !=0:
                 target_action_n[i] = trainers[i].target_action(next_obs)
