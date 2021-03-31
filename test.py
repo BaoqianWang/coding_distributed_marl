@@ -12,9 +12,13 @@ import numpy as np
 # print(neighbors)
 # pro_neighbors = list(np.where((distance<1.5) & (distance>1))[0])
 # print(pro_neighbors)
-a = [[]] * 6
+# a = [[0]] * 6
+#
+# for i in range(3):
+#     a[i] = [i]
+#     print(a)
 
-a[0] = [1,2,3]
-
-b = [value for value in a if len(value)!=0]
+b = [i for i in range(8) if i >4]
 print(b)
+
+print(np.random.uniform(0,1))
