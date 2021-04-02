@@ -18,7 +18,13 @@ import numpy as np
 #     a[i] = [i]
 #     print(a)
 
-b = [i for i in range(8) if i >4]
-print(b)
+# b = [i for i in range(8) if i >4]
+# print(b)
+#
+# print(np.random.uniform(0,1))
 
-print(np.random.uniform(0,1))
+#b = [1,1,1, -2, -3]
+#.remove(1)
+b = 2 if np.random.uniform(0,1)> 0.5 4 else
+c =
+print(b)

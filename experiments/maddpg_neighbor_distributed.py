@@ -97,7 +97,7 @@ def evaluate_policy(evaluate_env, trainers, display = False):
             episode_rewards[-1] += rew
         step += 1
         done = all(done_n)
-        terminal = (step >= arglist.max_episode_len)
+        terminal = (step >= (arglist.max_episode_len+40))
 
         obs_n = new_obs_n
         info_n = next_info_n
@@ -125,7 +125,7 @@ def evaluate_policy(evaluate_env, trainers, display = False):
 
 def interact_with_environments(env, trainers, node_id, steps):
 
-    for i in range(steps):
+    for k in range(steps):
         obs_neighbor = env.reset(node_id) # Only initalize neighbor area of nodei_id-th agent
         action_n = [np.array([0,0,0,0,0])] * env.n
         target_action_n = [np.array([0,0,0,0,0])] * env.n
@@ -134,11 +134,11 @@ def interact_with_environments(env, trainers, node_id, steps):
                 action_n[i] = trainers[i].action(obs)
 
         new_obs_neighbor, rew, done_n, next_info_n = env.step(action_n) # Interaction within the neighbor area
-        #print('Step:', i)
-        #print('Node id', node_id, 'Observation:', obs_neighbor[node_id][4:8], 'New Observation:', new_obs_neighbor[node_id][4:8])
+        #print('Step:', k)
+        #print('Node id', node_id, 'Observation:', obs_neighbor[node_id], 'New Observation:', new_obs_neighbor[node_id])
         for j, next_obs in enumerate(new_obs_neighbor):
             if len(next_obs) !=0:
-                target_action_n[i] = trainers[i].target_action(next_obs)
+                target_action_n[j] = trainers[j].target_action(next_obs)
         #print(target_action_n)
         info_n = 0.1
         ## Information needed:
