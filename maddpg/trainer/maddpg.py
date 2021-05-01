@@ -172,7 +172,7 @@ class MADDPGAgentTrainer(AgentTrainer):
         # if len(self.replay_buffer) < self.max_replay_buffer_len: # replay buffer is not large enough
         #     #print("not large enough")
         #     return
-        if not t % 100 == 0:  # only update every 100 steps
+        if not t % 50 == 0:  # only update every 100 steps
             return
 
         learning_start_time = time.time()

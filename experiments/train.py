@@ -10,9 +10,6 @@ import tensorflow.contrib.layers as layers
 from experiments.common_configuration import parse_args, mlp_model, make_env, get_trainers
 import imageio
 
-
-
-
 def interact_with_environments(env, trainers, size_transitions, train_data = True):
 
     obs_n = env.reset()
@@ -26,7 +23,10 @@ def interact_with_environments(env, trainers, size_transitions, train_data = Tru
         new_obs_n, rew_n, done_n, info_n = env.step(action_n)
         step += 1
         done = all(done_n)
-        terminal = (step >= arglist.max_episode_len)
+        if train_data:
+            terminal = (step >= arglist.max_episode_len)
+        else:
+            terminal = (step >= arglist.max_episode_len + 40)
         # collect experience
         if (train_data):
             for i, agent in enumerate(trainers):
@@ -46,9 +46,6 @@ def interact_with_environments(env, trainers, size_transitions, train_data = Tru
         if num_transitions >= size_transitions:
             break
 
-        # if len(trainers[0].replay_buffer) >= arglist.max_episode_len * arglist.batch_size:
-        #     break
-
     return np.mean(episode_rewards)
 
 def train(arglist):
@@ -59,7 +56,7 @@ def train(arglist):
         env = make_env(arglist.scenario, arglist, arglist.benchmark)
         # Create agent trainers
         obs_shape_n = [env.observation_space[i].shape for i in range(env.n)]
-        num_adversaries = min(env.n, 1)
+        num_adversaries = 0
         trainers = get_trainers(env, num_adversaries, obs_shape_n, arglist)
         print('Using good policy {} and adv policy {}'.format(arglist.good_policy, arglist.adv_policy))
 
@@ -132,7 +129,7 @@ def train(arglist):
             # increment global step counter
             train_step += 1
             #print(train_step)
-            if (train_step % 100 == 0):
+            if (train_step % 50 == 0):
                 if(arglist.num_straggler):
                     time.sleep(1)
                 num_train += 1
@@ -166,7 +163,7 @@ def train(arglist):
 
 
             # save model, display training output
-            if (num_train %100 ==0 and train_step %100 ==0):
+            if (num_train %50 ==0 and train_step %50 ==0):
                 #print(num_train)
                 U.save_state(arglist.save_dir, saver=saver)
                 # print statement depends on whether or not there are adversaries
