@@ -16,11 +16,8 @@ def parse_args():
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="ddpg", help="policy of adversaries")
-
-
-    parser.add_argument("--max_num_train", type=int, default=6000, help="number of train")
-    parser.add_argument("--num_train", type=int, default=4000, help="number of train")
-
+    parser.add_argument("--max_num_train", type=int, default=1000, help="number of train")
+    parser.add_argument("--num_train", type=int, default=1000, help="number of train")
     # Core training parameters
     parser.add_argument("--lr", type=float, default=1e-2, help="learning rate for Adam optimizer")
     parser.add_argument("--gamma", type=float, default=0.95, help="discount factor")
@@ -29,7 +26,7 @@ def parse_args():
     # Checkpointing
     parser.add_argument("--exp-name", type=str, default="maddpg", help="name of the experiment")
     parser.add_argument("--scheme", type=str, default="MDS", help="name of the computation scheme")
-    parser.add_argument("--save-dir", type=str, default="/home/smile/maddpg/trained_policy/", help="directory in which training state and model should be saved")
+    parser.add_argument("--save-dir", type=str, default="../trained_policy/", help="directory in which training state and model should be saved")
     parser.add_argument("--save-rate", type=int, default=1000, help="save model once every time this many episodes are completed")
     parser.add_argument("--load-dir", type=str, default="", help="directory in which training state and model are loaded")
     # Evaluation
@@ -38,7 +35,7 @@ def parse_args():
     parser.add_argument("--benchmark", action="store_true", default=False)
     parser.add_argument("--benchmark-iters", type=int, default=100000, help="number of iterations run for benchmarking")
     parser.add_argument("--benchmark-dir", type=str, default="./benchmark_files/", help="directory where benchmark data is saved")
-    parser.add_argument("--plots-dir", type=str, default="/home/smile/maddpg/learning_curves/", help="directory where plot data is saved")
+    parser.add_argument("--plots-dir", type=str, default="../learning_curves/", help="directory where plot data is saved")
     parser.add_argument("--num_agents", type=int, default="0", help="num agents")
     parser.add_argument("--num_straggler", type=int, default="0", help="num straggler")
     parser.add_argument("--save_rewards", action="store_true", default=False)

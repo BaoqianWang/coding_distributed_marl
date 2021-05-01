@@ -11,13 +11,11 @@ from experiments.common_configuration import parse_args, mlp_model, make_env, ge
 import imageio
 
 def interact_with_environments(env, trainers, size_transitions, train_data = True):
-
     obs_n = env.reset()
     episode_rewards = [0.0]
     step = 0
     num_transitions = 0
     while True:
-
         action_n = [agent.action(obs) for agent, obs in zip(trainers,obs_n)]
         # environment step
         new_obs_n, rew_n, done_n, info_n = env.step(action_n)
@@ -62,7 +60,7 @@ def train(arglist):
 
         # Initialize
         U.initialize()
-
+        arglist.save_dir = arglist.save_dir + '/num_agents%d/' %num_agents
         # Load previous results, if necessary
         if arglist.load_dir == "":
             arglist.load_dir = arglist.save_dir
@@ -103,9 +101,6 @@ def train(arglist):
             #print(action_n)
             # environment step
             new_obs_n, rew_n, done_n, info_n = env.step(action_n)
-            print('observation', new_obs_n)
-            print('action', action_n)
-            print('reward', rew_n)
             episode_step += 1
             done = all(done_n)
             terminal = (episode_step >= arglist.max_episode_len)
