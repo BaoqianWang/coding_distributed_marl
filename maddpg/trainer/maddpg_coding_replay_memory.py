@@ -150,6 +150,7 @@ class MADDPGAgentTrainer(AgentTrainer):
         self.max_replay_buffer_len = args.batch_size * args.max_episode_len
         self.replay_sample_index = None
         self.get_p_q_variables()
+        self.assign_weight()
 
     def action(self, obs):
 
@@ -163,31 +164,56 @@ class MADDPGAgentTrainer(AgentTrainer):
         with tf.variable_scope(self.name, reuse=reuse):
             self.p_variables=U.scope_vars(U.absolute_scope_name("p_func"))
             self.target_p_variables=U.scope_vars(U.absolute_scope_name("target_p_func"))
-            self.q_variables=U.scope_vars(U.absolute_scope_name("q_func"))
-            self.target_q_variables=U.scope_vars(U.absolute_scope_name("target_q_func"))
+            # self.q_variables=U.scope_vars(U.absolute_scope_name("q_func"))
+            # self.target_q_variables=U.scope_vars(U.absolute_scope_name("target_q_func"))
 
     def get_weigths(self):
         weigths_dict=dict()
         weigths_dict['p_variables']=self.session.run(self.p_variables)
         weigths_dict['target_p_variables']=self.session.run(self.target_p_variables)
-        weigths_dict['q_variables']=self.session.run(self.q_variables)
-        weigths_dict['target_q_variables']=self.session.run(self.target_q_variables)
+        # weigths_dict['q_variables']=self.session.run(self.q_variables)
+        # weigths_dict['target_q_variables']=self.session.run(self.target_q_variables)
         return weigths_dict
+
+    def assign_weight(self):
+        self.assign_op = dict()
+        self.assign_op['p_variables'] = []
+        self.assign_op['target_p_variables'] = []
+
+        k1 = len(self.p_variables)
+
+
+        self.x = []
+        for i in range(k1):
+            self.x.append(tf.placeholder(tf.float32, self.p_variables[i].get_shape()))
+            self.assign_op['p_variables'].append(self.p_variables[i].assign(self.x[i]))
+
+        self.y = []
+        for i in range(k1):
+            self.y.append(tf.placeholder(tf.float32, self.target_p_variables[i].get_shape()))
+            self.assign_op['target_p_variables'].append(self.target_p_variables[i].assign(self.y[i]))
 
 
     def set_weigths(self, weight_dict):
         for i, weight in enumerate(weight_dict['p_variables']):
-            tf.keras.backend.set_value(self.p_variables[i], weight)
+            self.session.run(self.assign_op['p_variables'][i], feed_dict = {self.x[i]: weight})
+
 
         for i, weight in enumerate(weight_dict['target_p_variables']):
-            tf.keras.backend.set_value(self.target_p_variables[i], weight)
+            self.session.run(self.assign_op['target_p_variables'][i], feed_dict = {self.y[i]: weight})
 
-        for i, weight in enumerate(weight_dict['q_variables']):
-            tf.keras.backend.set_value(self.q_variables[i], weight)
-
-        for i, weight in enumerate(weight_dict['target_q_variables']):
-            tf.keras.backend.set_value(self.target_q_variables[i], weight)
-
+    # def set_weigths(self, weight_dict):
+    #     for i, weight in enumerate(weight_dict['p_variables']):
+    #         tf.keras.backend.set_value(self.p_variables[i], weight)
+    #
+    #     for i, weight in enumerate(weight_dict['target_p_variables']):
+    #         tf.keras.backend.set_value(self.target_p_variables[i], weight)
+    #
+    #     for i, weight in enumerate(weight_dict['q_variables']):
+    #         tf.keras.backend.set_value(self.q_variables[i], weight)
+    #
+    #     for i, weight in enumerate(weight_dict['target_q_variables']):
+    #         tf.keras.backend.set_value(self.target_q_variables[i], weight)
 
 
     def experience(self, obs, action_n, new_obs, target_action_n, rew):

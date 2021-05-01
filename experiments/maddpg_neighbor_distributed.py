@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument("--max-episode-len", type=int, default=25, help="maximum episode length")
     parser.add_argument("--num-episodes", type=int, default=20000, help="number of episodes")
     parser.add_argument("--train-period", type=int, default=1000, help="frequency of updating parameters")
-    parser.add_argument("--num_train", type=int, default=4000, help="number of train")
+    parser.add_argument("--num_train", type=int, default=1000, help="number of train")
     parser.add_argument("--num-adversaries", type=int, default=0, help="number of adversaries")
     parser.add_argument("--good-policy", type=str, default="maddpg", help="policy for good agents")
     parser.add_argument("--adv-policy", type=str, default="maddpg", help="policy of adversaries")
@@ -31,7 +31,7 @@ def parse_args():
     parser.add_argument("--num-units", type=int, default=64, help="number of units in the mlp")
     # Checkpointing
     parser.add_argument("--exp-name", type=str, default="maddpg", help="name of the experiment")
-    parser.add_argument("--save-dir", type=str, default="/home/smile/maddpg/trained_policy/", help="directory in which training state and model should be saved")
+    parser.add_argument("--save-dir", type=str, default="../trained_policy/", help="directory in which training state and model should be saved")
     parser.add_argument("--save-rate", type=int, default=20, help="save model once every time this many episodes are completed")
     parser.add_argument("--load-dir", type=str, default="", help="directory in which training state and model are loaded")
     # Evaluation
@@ -40,7 +40,7 @@ def parse_args():
     parser.add_argument("--benchmark", action="store_true", default=False)
     parser.add_argument("--benchmark-iters", type=int, default=100000, help="number of iterations run for benchmarking")
     parser.add_argument("--benchmark-dir", type=str, default="./benchmark_files/", help="directory where benchmark data is saved")
-    parser.add_argument("--plots-dir", type=str, default="/home/smile/maddpg/learning_curves/", help="directory where plot data is saved")
+    parser.add_argument("--plots-dir", type=str, default="../learning_curves/", help="directory where plot data is saved")
     parser.add_argument("--num_straggler", type=int, default="0", help="num straggler")
     parser.add_argument("--num_agents", type=int, default="0", help="num agents")
     return parser.parse_args()
@@ -199,15 +199,15 @@ if __name__== "__main__":
             evaluate_env = make_env(arglist.scenario, arglist, evaluate= True)
             saver = tf.train.Saver()
             final_rewards = []
+            arglist.save_dir = arglist.save_dir + '/num_agents_%d/' %num_agents
             if arglist.restore:
                 print('Loading previous state...')
                 U.load_state(arglist.save_dir)
 
-            #interact_with_environments(env, trainers, steps, True)
 
         done = 0
 
-        start_time = time.time()
+
 
         if(arglist.display):
             if(node_id == CENTRAL_CONTROLLER):
@@ -215,8 +215,15 @@ if __name__== "__main__":
                 U.load_state(arglist.save_dir)
                 evaluate_policy(evaluate_env, trainers, display = True)
         else:
+            if (node_id != CENTRAL_CONTROLLER):
+                env_time1 = time.time()
+                interact_with_environments(env, trainers, node_id-1, 5*arglist.batch_size)
+                env_time2 = time.time()
+                print('Env interaction time', env_time2 - env_time1)
+            comm.Barrier()
+            start_time = time.time()
             while True:
-
+                comm.Barrier()
                 STRAGGLER = random.sample(LEARNERS, num_straggler)
                 #Central controller broadcast weights
                 if(node_id==CENTRAL_CONTROLLER):
@@ -237,19 +244,21 @@ if __name__== "__main__":
                     for i, agent in enumerate(trainers):
                         agent.set_weigths(all_agents_weights[i])
 
-                    if (num_train == 0):
-                        env_time1 = time.time()
-                        interact_with_environments(env, trainers, node_id-1, 5*arglist.batch_size)
-                        env_time2 = time.time()
-                        print('Env interaction time', env_time2 - env_time1)
-                    else:
-                        interact_with_environments(env, trainers, node_id-1, 4*steps)
+
+                    interact_with_environments(env, trainers, node_id-1, 4*steps)
 
                     loss=trainers[node_id-1].update(trainers)
                     weights = trainers[node_id-1].get_weigths()
-                    comm.send(weights, dest=0,tag=num_train)
+                    #comm.send(weights, dest=0,tag=num_train)
                     # end_worker_weights=time.time()
 
+                if (node_id == CENTRAL_CONTROLLER):
+                    test = 1
+                    weights = None
+
+                weights = comm.gather(weights, root = 0)
+
+                if (node_id in LEARNERS):
                     num_train+=1
                     if num_train > arglist.num_train:
                         break
@@ -258,13 +267,12 @@ if __name__== "__main__":
                 if(node_id == CENTRAL_CONTROLLER):
                     recv_time1 = time.time()
                     for i in range(num_learners):
-                         agent_weight = comm.recv(source=i+1, tag=num_train)
-                         trainers[i].set_weigths(agent_weight)
+                         trainers[i].set_weigths(weights[i+1])
                     recv_time2 = time.time()
                     #print('Recv time', recv_time2 - recv_time1)
 
                     num_train += 1
-                    #print('Num of iteration', num_train)
+
                     if(num_train % 50 == 0):
                         end_train_time = time.time()
                         U.save_state(arglist.save_dir, saver=saver)
