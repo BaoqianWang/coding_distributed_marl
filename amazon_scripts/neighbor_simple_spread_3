@@ -1,0 +1,27 @@
+Coded computation scheme:  Uncoded
+Scenario:  simple_spread
+Number of learners:  3
+Number of agents:  3
+Env interaction time 5.302465438842773
+Env interaction time 5.286602735519409
+Env interaction time 5.3531787395477295
+Num of training iteration: 50 Reward: -10115.622074632585 Training time: 7.907162666320801
+Num of training iteration: 100 Reward: -3716.957278927304 Training time: 7.030655384063721
+Num of training iteration: 150 Reward: -2770.7352379275653 Training time: 7.056100130081177
+Num of training iteration: 200 Reward: -3025.6010323305245 Training time: 7.039780378341675
+Num of training iteration: 250 Reward: -2257.0194473810307 Training time: 7.046686887741089
+Num of training iteration: 300 Reward: -3537.335113287379 Training time: 7.059755563735962
+Num of training iteration: 350 Reward: -3021.278595885729 Training time: 6.98088264465332
+Num of training iteration: 400 Reward: -2837.6404195212776 Training time: 7.085840463638306
+Num of training iteration: 450 Reward: -2449.9961947917986 Training time: 6.9928977489471436
+Num of training iteration: 500 Reward: -1862.4282137599107 Training time: 7.103903293609619
+Num of training iteration: 550 Reward: -3838.6569044460475 Training time: 7.0059144496917725
+Num of training iteration: 600 Reward: -2793.7985923296055 Training time: 7.028018474578857
+Num of training iteration: 650 Reward: -3071.9639785460845 Training time: 7.092801809310913
+Num of training iteration: 700 Reward: -4678.225555153393 Training time: 7.029760837554932
+Num of training iteration: 750 Reward: -2640.00615036739 Training time: 7.047255992889404
+Num of training iteration: 800 Reward: -2632.1532774110233 Training time: 7.065099477767944
+Num of training iteration: 850 Reward: -3142.3527387198355 Training time: 7.149410724639893
+Num of training iteration: 900 Reward: -2181.618988182233 Training time: 6.948325872421265
+Num of training iteration: 950 Reward: -2817.138513253024 Training time: 7.133507251739502
+Num of training iteration: 1000 Reward: -2128.9559972946486 Training time: 7.0449748039245605

@@ -25,5 +25,4 @@ done
 
 sleep 1
 echo "start multiple scheme ..."
-mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded\
-python3 ../experiments/maddpg_neighbor_distributed.py --scenario simple_spread --num_agents 15
+mpirun --mca plm_rsh_no_tree_spawn 1 --mca btl_base_warn_component_unused 0  --host $host_name_uncoded python3 ../experiments/maddpg_neighbor_distributed.py --scenario simple_spread --num_agents 3 >> neighbor_simple_spread_3

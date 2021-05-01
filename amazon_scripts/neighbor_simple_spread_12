@@ -1,0 +1,36 @@
+Coded computation scheme:  Uncoded
+Scenario:  simple_spread
+Number of learners:  12
+Number of agents:  12
+Env interaction time 13.416038513183594
+Env interaction time 13.365501403808594
+Env interaction time 13.38901948928833
+Env interaction time 13.445337772369385
+Env interaction time 13.553812742233276
+Env interaction time 13.739812135696411
+Env interaction time 13.545038223266602
+Env interaction time 13.775328636169434
+Env interaction time 13.81396222114563
+Env interaction time 14.649285793304443
+Env interaction time 15.076822280883789
+Env interaction time 15.307583332061768
+Num of training iteration: 50 Reward: -365515.19945763086 Training time: 34.93553328514099
+Num of training iteration: 100 Reward: -160500.47034192772 Training time: 20.11764645576477
+Num of training iteration: 150 Reward: -142765.43173636528 Training time: 20.17932438850403
+Num of training iteration: 200 Reward: -142915.66010419067 Training time: 20.155579328536987
+Num of training iteration: 250 Reward: -147397.57615467906 Training time: 20.23096513748169
+Num of training iteration: 300 Reward: -95749.62032087122 Training time: 20.26261281967163
+Num of training iteration: 350 Reward: -80427.17907614014 Training time: 20.21413540840149
+Num of training iteration: 400 Reward: -145072.49197510444 Training time: 20.303285121917725
+Num of training iteration: 450 Reward: -131203.57978867285 Training time: 20.29552125930786
+Num of training iteration: 500 Reward: -125185.62511850084 Training time: 20.556879997253418
+Num of training iteration: 550 Reward: -104316.98785626261 Training time: 20.234315872192383
+Num of training iteration: 600 Reward: -150615.93395642407 Training time: 20.345173597335815
+Num of training iteration: 650 Reward: -132222.65002379857 Training time: 20.260425567626953
+Num of training iteration: 700 Reward: -129958.412425624 Training time: 20.4221351146698
+Num of training iteration: 750 Reward: -113680.98702542095 Training time: 20.3011212348938
+Num of training iteration: 800 Reward: -126483.18151957278 Training time: 20.527926683425903
+Num of training iteration: 850 Reward: -140178.19391208029 Training time: 20.35443878173828
+Num of training iteration: 900 Reward: -162415.9504949838 Training time: 20.31025195121765
+Num of training iteration: 950 Reward: -96037.97931095137 Training time: 20.585073947906494
+Num of training iteration: 1000 Reward: -114061.53359556358 Training time: 20.215375185012817
