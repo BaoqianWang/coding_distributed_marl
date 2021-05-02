@@ -60,7 +60,7 @@ def train(arglist):
 
         # Initialize
         U.initialize()
-        arglist.save_dir = arglist.save_dir + '/num_agents%d/' %num_agents
+        arglist.save_dir = arglist.save_dir + '/num_agents%d/' %env.n
         # Load previous results, if necessary
         if arglist.load_dir == "":
             arglist.load_dir = arglist.save_dir

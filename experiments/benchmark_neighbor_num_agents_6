@@ -1,0 +1,47 @@
+Using good policy maddpg and adv policy ddpg
+Coded computation scheme:  Centralized Training
+Scenario:  simple_spread
+Number of agents:  6
+Starting iterations...
+Environment interactation time:  15.441552639007568
+steps: 50,  mean episode reward: -103490.7458718078, time: 21.413
+Computation time: 1.720632553100586
+steps: 100,  mean episode reward: -87156.83961673395, time: 19.624
+Computation time: 0.2362537384033203
+steps: 150,  mean episode reward: -92023.1743371103, time: 19.805
+Computation time: 0.23726773262023926
+steps: 200,  mean episode reward: -107609.1436711846, time: 20.006
+Computation time: 0.24014639854431152
+steps: 250,  mean episode reward: -83446.50574696329, time: 19.987
+Computation time: 0.24004673957824707
+steps: 300,  mean episode reward: -66888.35627403377, time: 20.04
+Computation time: 0.2441730499267578
+steps: 350,  mean episode reward: -67266.2878452624, time: 19.863
+Computation time: 0.2384326457977295
+steps: 400,  mean episode reward: -71991.78142911843, time: 20.029
+Computation time: 0.24795126914978027
+steps: 450,  mean episode reward: -65202.22427233932, time: 20.256
+Computation time: 0.246077299118042
+steps: 500,  mean episode reward: -53915.05316740444, time: 20.026
+Computation time: 0.24124526977539062
+steps: 550,  mean episode reward: -46481.59498981225, time: 20.015
+Computation time: 0.24153780937194824
+steps: 600,  mean episode reward: -23177.517399119184, time: 20.166
+Computation time: 0.26585936546325684
+steps: 650,  mean episode reward: -26776.967463661025, time: 20.122
+Computation time: 0.2446599006652832
+steps: 700,  mean episode reward: -23303.68295123847, time: 20.205
+Computation time: 0.24514150619506836
+steps: 750,  mean episode reward: -28563.401719552934, time: 20.183
+Computation time: 0.24442505836486816
+steps: 800,  mean episode reward: -21665.441106810358, time: 20.378
+Computation time: 0.25053882598876953
+steps: 850,  mean episode reward: -22511.563605565607, time: 20.567
+Computation time: 0.25139880180358887
+steps: 900,  mean episode reward: -24710.00437923012, time: 20.276
+Computation time: 0.24518299102783203
+steps: 950,  mean episode reward: -22284.365288964338, time: 20.356
+Computation time: 0.24666857719421387
+steps: 1000,  mean episode reward: -20966.027388552353, time: 20.301
+Computation time: 0.24534320831298828
+The mean time is 20.116052631578942 The corresponding variance is 0.04669457617728544
