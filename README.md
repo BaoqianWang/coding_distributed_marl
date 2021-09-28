@@ -87,6 +87,8 @@ has been provided), but does not continue training (default: `False`)
 ## Code structure
 
 - `./experiments/train.py`: contains code for training MADDPG on the MPE
+- 
+- `./experiments/maddpg_coding_train.py`: contains code for training MADDPG with coded distributed training framework
 
 - `./maddpg/trainer/maddpg.py`: core code for the MADDPG algorithm
 
